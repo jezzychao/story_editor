@@ -1,15 +1,6 @@
 {
-  "android-instant": {
-    "REMOTE_SERVER_ROOT": "",
-    "host": "",
-    "pathPattern": "",
-    "recordPath": "",
-    "scheme": "https",
-    "skipRecord": false
-  },
   "encryptJs": true,
   "excludeScenes": [],
-  "fb-instant-games": {},
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
@@ -23,11 +14,6 @@
     "upsideDown": false
   },
   "packageName": "org.cocos2d.story_editor",
-  "qqplay": {
-    "REMOTE_SERVER_ROOT": "",
-    "orientation": "portrait",
-    "zip": false
-  },
   "startScene": "4a6d774f-3164-49f8-95eb-c10fe20c2276",
   "title": "story_editor",
   "webOrientation": "auto",
@@ -38,5 +24,12 @@
     "subContext": ""
   },
   "xxteaKey": "2f717fec-01c7-47",
-  "zipCompressJs": true
+  "zipCompressJs": true,
+  "includeAnySDK": false,
+  "oauthLoginServer": "",
+  "appKey": "",
+  "appSecret": "",
+  "privateKey": "",
+  "jailbreakPlatform": false,
+  "renderMode": "0"
 }
