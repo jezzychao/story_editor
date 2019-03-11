@@ -9,4 +9,8 @@ window.utils = {
             cb && cb(res);
         })
     },
+
+    deepCopy: function (data) {
+        return JSON.parse(JSON.stringify(data));
+    },
 };

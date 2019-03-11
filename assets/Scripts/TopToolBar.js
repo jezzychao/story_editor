@@ -18,12 +18,12 @@ cc.Class({
     },
 
     _onBtnNewClick: function (event) {
-        utils.loadPrefab("FileItem", (res) => {
-            let item = cc.instantiate(res);
-            item.parent = cc.find('Canvas/FileList/view/content');
-            item.x = 0;
-            //TODO: 更新所有界面显示，将新建项作为选中项
-        });
+        msg.send(msg.key.CREATE_A_FILE);
+        // utils.loadPrefab("FileItem", (res) => {
+        //     let item = cc.instantiate(res);
+        //     item.parent = cc.find('Canvas/FileInspector/view/content');
+        //     item.x = 0;
+        // });
     },
 
     // update (dt) {},
