@@ -19,7 +19,7 @@ var FileUtils = (function (relativePath) {
 
     var ret = {
         getJsonFromFile: function (filename, cb) {
-            let path = `${relaPath}\\${filename}.json`;
+            let path = `${relaPath}/${filename}.json`;
             if (isFileExist(path)) {
                 var str = jsb.fileUtils.getStringFromFile(path);
                 return JSON.parse(str);
@@ -29,15 +29,15 @@ var FileUtils = (function (relativePath) {
         },
 
         writeJsonToFile: function (filename, json) {
-            jsb.fileUtils.writeStringToFile(JSON.stringify(json), `${relaPath}\\${filename}.json`);
+            jsb.fileUtils.writeStringToFile(JSON.stringify(json), `${relaPath}/${filename}.json`);
         },
 
         removeFile: function (filename) {
-            return jsb.fileUtils.removeFile(`${relaPath}\\${filename}.json`);
+            return jsb.fileUtils.removeFile(`${relaPath}/${filename}.json`);
         },
 
         renameFile: function (oldName, newName) {
-            jsb.fileUtils.renameFile(relaPath, oldName + '.json', newName + '.json');
+            jsb.fileUtils.renameFile(relaPath + '/', oldName + '.json', newName + '.json');
         },
 
         listFiles: function () {
@@ -54,7 +54,7 @@ var FileUtils = (function (relativePath) {
         },
 
         fileExist: function (fileName) {
-            let path = `${relaPath}\\${fileName}.json`;
+            let path = `${relaPath}/${fileName}.json`;
             return isFileExist(path);
         },
     };
@@ -64,7 +64,7 @@ var FileUtils = (function (relativePath) {
 
 var FileMgr = (function (helper) {
 
-    var currFileData = null;
+    var currFileData = {};
     var allFiles = [];
 
     var ret = {
@@ -111,12 +111,19 @@ var FileMgr = (function (helper) {
 
     function _rename(oldName, newName) {
         if (helper.fileExist(oldName)) {
-            helper.renameFile(oldName, newName);
-
-            _updateFiles();
-
-            msg.send(msg.key.UI_UPDATE_FILES_LIST, utils.deepCopy(allFiles));
-            console.log(`rename file: ${oldName} -> ${newName} successfully`);
+            let succ = true;
+            for (let i = 0; i < allFiles.length; ++i) {
+                if (allFiles[i] != oldName && allFiles[i] == newName) {
+                    succ = false;
+                    break;
+                }
+            }
+            if (succ) {
+                helper.renameFile(oldName, newName);
+                _updateFiles();
+                console.log(`rename file: ${oldName} -> ${newName} successfully`);
+            }
+            msg.send(msg.key.UI_UPDATE_FILE_NAME, { state: succ, old: oldName, new: newName });
         } else {
             console.error(`This do not exist: ${oldName}`);
         }
@@ -124,7 +131,8 @@ var FileMgr = (function (helper) {
 
     function _open(filename) {
         if (helper.fileExist(filename)) {
-            currFileData = helper.getJsonFromFile(filename);
+            currFileData = {};
+            currFileData[filename] = helper.getJsonFromFile(filename);
             msg.send(msg.key.UI_UPDATE_ALL_INSPECTORS, currFileData);
             console.log(`open file: ${filename} successfully`);
         } else {
@@ -135,10 +143,12 @@ var FileMgr = (function (helper) {
     function _delete(filename) {
         if (helper.fileExist(filename)) {
             if (helper.removeFile(filename)) {
-                currFileData = null;
-
+                if (currFileData[filename]) {
+                    delete currFileData[filename];
+                    msg.send(msg.key.UI_UPDATE_ALL_INSPECTORS, null);
+                }
                 _updateFiles();
-                msg.send(msg.key.UI_UPDATE_ALL_INSPECTORS, currFileData);
+                msg.send(msg.key.UI_UPDATE_FILES_LIST, utils.deepCopy(allFiles));
                 console.log(`delete file: ${filename} successfully`);
             } else {
                 console.log(`delete file: ${filename} failurly`);

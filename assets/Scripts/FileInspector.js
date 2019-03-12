@@ -9,11 +9,13 @@ cc.Class({
 
     ctor() {
         this.mAllItems = {};
+        this.mCurrOpened = null;
     },
 
     onLoad() {
         msg.register(this, msg.key.UI_UPDATE_FILES_LIST, (tag, key, param) => { this._updateList(param); }, this);
-        msg.register(this, msg.key.UI_UPDATE_ALL_INSPECTORS, (tag, key, param) => { this._updateList(param); }, this);
+        msg.register(this, msg.key.UI_UPDATE_ALL_INSPECTORS, (tag, key, param) => { this._markOpenedFile(param); }, this);
+        msg.register(this, msg.key.UI_UPDATE_FILE_NAME, (tag, key, param) => { this._updateName(param); }, this);
     },
 
     onDestroy() {
@@ -28,10 +30,42 @@ cc.Class({
         this._updateList(allFiles);
     },
 
-    _updateList: function (allFiles) {
-        console.log('_updateList---------------------------------------')
-        console.log(JSON.stringify(allFiles));
+    _updateName: function (param) {
+        let tIsSucc = param['state'], old = param['old'], newname = param['new'];
+        if (tIsSucc) {
+            var oldItem = this.mAllItems[old];
+            this.mAllItems[newname] = oldItem;
+            delete this.mAllItems[old];
+            if (this.mCurrOpened == old) {
+                this.mCurrOpened = newname;
+            }
+            this.mAllItems[newname].setFileName(newname);
+            this._sort();
+        } else {
+            //TODO:提示更新名称重复
+            console.log('TIPS: 提示更新名称重复');
+        }
+    },
 
+    _markOpenedFile: function (currData) {
+        if (currData) {
+            let openedFile = Object.keys(currData)[0]
+            if (this.mCurrOpened && this.mAllItems[this.mCurrOpened]) {
+                this.mAllItems[this.mCurrOpened].markColor(false);
+            }
+            if (this.mAllItems[openedFile]) {
+                this.mCurrOpened = openedFile;
+                this.mAllItems[openedFile].markColor(true);
+            }
+        } else {
+            if (this.mCurrOpened && this.mAllItems[this.mCurrOpened]) {
+                this.mAllItems[this.mCurrOpened].markColor(false);
+            }
+            this.mCurrOpened = null;
+        }
+    },
+
+    _updateList: function (allFiles) {
         let oldFiles = Object.keys(this.mAllItems);
         let existInTagArray = function (oldFile, tagArray) {
             for (let i = 0; i < tagArray.length; ++i) {
@@ -41,10 +75,6 @@ cc.Class({
             }
             return false;
         };
-
-        console.log('oldFiles---------------------------------------')
-        console.log(JSON.stringify(oldFiles));
-
         let tDelList = [];
         for (let i = 0; i < oldFiles.length; ++i) {
             if (!existInTagArray(oldFiles[i], allFiles)) {
@@ -79,22 +109,22 @@ cc.Class({
     },
 
     _deleteOneItem: function (filename) {
-        for (let name in this.mAllItems) {
-            if (name == filename) {
-                this.mAllItems[name].destroy();
-                delete this.mAllItems[name];
-                return true;
-            }
+        if (this.mAllItems[filename]) {
+            this.mAllItems[filename].node.destroy();
+            delete this.mAllItems[filename];
+            return true;
+        } else {
+            return false;
         }
-        return false;
     },
 
     _sort: function () {
-        let index = 0;
-        for (let key in this.mAllItems) {
-            let tNode = this.mAllItems[key].node;
-            if (tNode.getSiblingIndex() != index) {
-                tNode.setSiblingIndex(index++);
+        let tKeys = Object.keys(this.mAllItems);
+        tKeys.sort();
+        for (let i = 0; i < tKeys.length; ++i) {
+            let tScr = this.mAllItems[tKeys[i]];
+            if (tScr) {
+                tScr.node.setSiblingIndex(i);
             }
         }
     },

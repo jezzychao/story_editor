@@ -36,7 +36,6 @@ cc.Class({
                     self._rename();
                 });
                 menu.addAct("删除", () => {
-                    self.node.destroy();
                     msg.send(msg.key.DELETE_THE_FILE, self.getFileName());
                 });
             });
@@ -51,11 +50,18 @@ cc.Class({
         this.EditBox.string = this.Label.string;
         this.EditBox.node.targetOff(this);
         this.EditBox.node.on('editing-did-ended', (event) => {
-            this.Label.string = this.EditBox.string;
             this.Label.node.active = true;
             this.EditBox.node.active = false;
-            msg.send(msg.key.RENAME_THE_FILE, { old: originalName, new: this.getFileName() });
+            msg.send(msg.key.RENAME_THE_FILE, { old: originalName, new: this.EditBox.string });
         }, this);
+    },
+
+    modifyName: function (name) {
+        this.Label.string = name;
+    },
+
+    markColor: function (isOpened) {
+        this.node.color = isOpened ? cc.Color.BLUE : cc.Color.WHITE;
     },
 
     setFileName: function (name) {

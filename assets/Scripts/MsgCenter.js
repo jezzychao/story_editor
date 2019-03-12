@@ -158,7 +158,7 @@ window.msg = {
         "RENAME_THE_FILE": 3,
         "DELETE_THE_FILE": 4,
 
-        // "UI_UPDATE_FILES_ORDER": 1001,//更新文件顺序
+        "UI_UPDATE_FILE_NAME": 1001,//更新文件名称
         "UI_UPDATE_ALL_INSPECTORS": 1002,//更新所有的界面显示
         "UI_UPDATE_FILES_LIST": 1003,//更新文件列表
     }
