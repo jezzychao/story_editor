@@ -41,7 +41,16 @@ var FileUtils = (function (relativePath) {
         },
 
         listFiles: function () {
-            return jsb.fileUtils.listFiles(relaPath);
+            var files = jsb.fileUtils.listFiles(relaPath);
+            var filenames = files.map(v => { let t = v.split('/'); return (t[t.length - 1]).split('.')[0]; });
+            for (let i = filenames.length - 1; i >= 0; --i) {
+                if (filenames[i] === '' || filenames[i] === '.' || filenames[i] === '..') {
+                    filenames.splice(i, 1);
+                }
+            }
+            console.log('listFiles----------------------------------------------');
+            console.log(JSON.stringify(filenames));
+            return filenames;
         },
 
         fileExist: function (fileName) {
@@ -63,10 +72,10 @@ var FileMgr = (function (helper) {
             _updateFiles();
             console.log(allFiles.join(', '));
 
-            msg.register('FileMgr', msg.key.CREATE_A_FILE, (tag, key, (param) => { _craete(param); }), this);
-            msg.register('FileMgr', msg.key.OPEN_THE_FILE, (tag, key, (param) => { _open(param); }), this);
-            msg.register('FileMgr', msg.key.RENAME_THE_FILE, (tag, key, (param) => { _rename(param['old'], param['new']); }), this);
-            msg.register('FileMgr', msg.key.DELETE_THE_FILE, (tag, key, (param) => { _delete(param); }), this);
+            msg.register('FileMgr', msg.key.CREATE_A_FILE, (tag, key, param) => { _craete(param); }, this);
+            msg.register('FileMgr', msg.key.OPEN_THE_FILE, (tag, key, param) => { _open(param); }, this);
+            msg.register('FileMgr', msg.key.RENAME_THE_FILE, (tag, key, param) => { _rename(param['old'], param['new']); }, this);
+            msg.register('FileMgr', msg.key.DELETE_THE_FILE, (tag, key, param) => { _delete(param); }, this);
         },
 
         uninit: function () {

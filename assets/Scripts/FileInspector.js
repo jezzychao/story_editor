@@ -12,8 +12,8 @@ cc.Class({
     },
 
     onLoad() {
-        msg.register(this, msg.key.UI_UPDATE_FILES_LIST, (tag, key, (param) => { this._updateList(param); }), this);
-        msg.register(this, msg.key.UI_UPDATE_ALL_INSPECTORS, (tag, key, (param) => { this._updateList(param); }), this);
+        msg.register(this, msg.key.UI_UPDATE_FILES_LIST, (tag, key, param) => { this._updateList(param); }, this);
+        msg.register(this, msg.key.UI_UPDATE_ALL_INSPECTORS, (tag, key, param) => { this._updateList(param); }, this);
     },
 
     onDestroy() {
@@ -21,13 +21,17 @@ cc.Class({
     },
 
     start() {
-        var allFiles = FileMgr.getAllFiles();
+        var allFiles = fileMgr.getAllFiles();
         if (!allFiles.length) {
             return;
         }
+        this._updateList(allFiles);
     },
 
     _updateList: function (allFiles) {
+        console.log('_updateList---------------------------------------')
+        console.log(JSON.stringify(allFiles));
+
         let oldFiles = Object.keys(this.mAllItems);
         let existInTagArray = function (oldFile, tagArray) {
             for (let i = 0; i < tagArray.length; ++i) {
@@ -38,9 +42,12 @@ cc.Class({
             return false;
         };
 
+        console.log('oldFiles---------------------------------------')
+        console.log(JSON.stringify(oldFiles));
+
         let tDelList = [];
         for (let i = 0; i < oldFiles.length; ++i) {
-            if (!existInTagArray(oldFiles[i]), allFiles) {
+            if (!existInTagArray(oldFiles[i], allFiles)) {
                 tDelList.push(oldFiles[i]);
             }
         }
@@ -49,8 +56,9 @@ cc.Class({
         });
 
         let tAddList = [];
+
         for (let i = 0; i < allFiles.length; ++i) {
-            if (!existInTagArray(allFiles[i]), oldFiles) {
+            if (!existInTagArray(allFiles[i], oldFiles)) {
                 tAddList.push(allFiles[i]);
             }
         }
@@ -73,7 +81,7 @@ cc.Class({
     _deleteOneItem: function (filename) {
         for (let name in this.mAllItems) {
             if (name == filename) {
-                this.mAllItems[name].node.destroy();
+                this.mAllItems[name].destroy();
                 delete this.mAllItems[name];
                 return true;
             }

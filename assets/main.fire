@@ -702,8 +702,12 @@
       "__id__": 3
     },
     "_enabled": true,
-    "fileItem": null,
-    "nodContainer": null
+    "fileItem": {
+      "__uuid__": "620ecbd0-8c12-4189-8533-06529b3a6b9b"
+    },
+    "nodContainer": {
+      "__id__": 9
+    }
   },
   {
     "__type__": "cc.Node",

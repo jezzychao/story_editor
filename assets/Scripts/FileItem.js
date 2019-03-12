@@ -54,7 +54,6 @@ cc.Class({
             this.Label.string = this.EditBox.string;
             this.Label.node.active = true;
             this.EditBox.node.active = false;
-            //TODO:rename file;
             msg.send(msg.key.RENAME_THE_FILE, { old: originalName, new: this.getFileName() });
         }, this);
     },
