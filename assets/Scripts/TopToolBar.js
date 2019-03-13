@@ -11,6 +11,9 @@ cc.Class({
     onLoad() {
         var nodBtnNew = this.node.getChildByName("BtnNew");
         nodBtnNew.on(cc.Node.EventType.TOUCH_END, this._onBtnNewClick);
+
+        var nodBtnNew = this.node.getChildByName("BtnSave");
+        nodBtnNew.on(cc.Node.EventType.TOUCH_END, this._onBtnSaveClick);
     },
 
     start() {
@@ -19,12 +22,9 @@ cc.Class({
 
     _onBtnNewClick: function (event) {
         msg.send(msg.key.CREATE_A_FILE);
-        // utils.loadPrefab("FileItem", (res) => {
-        //     let item = cc.instantiate(res);
-        //     item.parent = cc.find('Canvas/FileInspector/view/content');
-        //     item.x = 0;
-        // });
     },
 
-    // update (dt) {},
+    _onBtnSaveClick: function (event) {
+        msg.send(msg.key.SAVE);
+    },
 });

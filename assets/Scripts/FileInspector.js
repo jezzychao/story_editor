@@ -14,7 +14,7 @@ cc.Class({
 
     onLoad() {
         msg.register(this, msg.key.UI_UPDATE_FILES_LIST, (tag, key, param) => { this._updateList(param); }, this);
-        msg.register(this, msg.key.UI_UPDATE_ALL_INSPECTORS, (tag, key, param) => { this._markOpenedFile(param); }, this);
+        msg.register(this, msg.key.UI_MARK_THE_FILE_AS_OPENED, (tag, key, param) => { this._markOpenedFile(param); }, this);
         msg.register(this, msg.key.UI_UPDATE_FILE_NAME, (tag, key, param) => { this._updateName(param); }, this);
     },
 
@@ -47,9 +47,8 @@ cc.Class({
         }
     },
 
-    _markOpenedFile: function (currData) {
-        if (currData) {
-            let openedFile = Object.keys(currData)[0]
+    _markOpenedFile: function (openedFile) {
+        if (openedFile) {
             if (this.mCurrOpened && this.mAllItems[this.mCurrOpened]) {
                 this.mAllItems[this.mCurrOpened].markColor(false);
             }
@@ -103,7 +102,7 @@ cc.Class({
         let node = cc.instantiate(this.fileItem);
         this.nodContainer.addChild(node);
         node.x = 0;
-        let item = node.getComponent('FileItem');
+        let item = node.addComponent('FileItem');
         item.setFileName(filename);
         this.mAllItems[filename] = item;
     },

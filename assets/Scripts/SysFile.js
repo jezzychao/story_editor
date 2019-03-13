@@ -64,7 +64,8 @@ var FileUtils = (function (relativePath) {
 
 var FileMgr = (function (helper) {
 
-    var currFileData = {};
+    // var currFileData = {};
+    var openedFilename = null;
     var allFiles = [];
 
     var ret = {
@@ -85,6 +86,10 @@ var FileMgr = (function (helper) {
         getAllFiles: function () {
             return allFiles;
         },
+
+        getOpened: function () {
+            return openedFilename;
+        }
 
     };
 
@@ -107,6 +112,7 @@ var FileMgr = (function (helper) {
         helper.writeJsonToFile(name, {});
         _updateFiles();
         msg.send(msg.key.UI_UPDATE_FILES_LIST, utils.deepCopy(allFiles));
+        _logInfo();
     }
 
     function _rename(oldName, newName) {
@@ -120,6 +126,9 @@ var FileMgr = (function (helper) {
             }
             if (succ) {
                 helper.renameFile(oldName, newName);
+                if (oldName == openedFilename) {
+                    openedFilename = newName;
+                }
                 _updateFiles();
                 console.log(`rename file: ${oldName} -> ${newName} successfully`);
             }
@@ -127,25 +136,35 @@ var FileMgr = (function (helper) {
         } else {
             console.error(`This do not exist: ${oldName}`);
         }
+        _logInfo();
     };
 
     function _open(filename) {
         if (helper.fileExist(filename)) {
-            currFileData = {};
-            currFileData[filename] = helper.getJsonFromFile(filename);
-            msg.send(msg.key.UI_UPDATE_ALL_INSPECTORS, currFileData);
+            if (openedFilename == filename) {
+                return;
+            }
+            msg.send(msg.key.SAVE);
+
+            openedFilename = filename;
+            plotVecModel.uninit();
+            plotVecModel.init(openedFilename);
+
+            msg.send(msg.key.UI_MARK_THE_FILE_AS_OPENED, openedFilename);
             console.log(`open file: ${filename} successfully`);
         } else {
             console.error(`This do not exist: ${filename}`);
         }
+        _logInfo();
     };
 
     function _delete(filename) {
         if (helper.fileExist(filename)) {
             if (helper.removeFile(filename)) {
-                if (currFileData[filename]) {
-                    delete currFileData[filename];
-                    msg.send(msg.key.UI_UPDATE_ALL_INSPECTORS, null);
+                if (openedFilename == filename) {
+                    plotVecModel.uninit();
+                    msg.send(msg.key.UI_MARK_THE_FILE_AS_OPENED, openedFilename);
+                    openedFilename = null;
                 }
                 _updateFiles();
                 msg.send(msg.key.UI_UPDATE_FILES_LIST, utils.deepCopy(allFiles));
@@ -156,10 +175,22 @@ var FileMgr = (function (helper) {
         } else {
             console.error(`This do not exist: ${filename}`);
         }
+        _logInfo();
+
     };
+
+    function _logInfo() {
+        console.log('');
+        console.log("FileInfo:----------------------------------------------------------")
+        console.log("openedFilename: " + JSON.stringify(openedFilename));
+        console.log("allFilenames: " + JSON.stringify(allFiles));
+        console.log("FileInfo:----------------------------------------------------------")
+        console.log('');
+    }
 
     ret.init();
     return ret;
 })(FileUtils);
 
 window.fileMgr = FileMgr;
+window.fileHelper = FileUtils;

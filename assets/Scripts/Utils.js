@@ -13,4 +13,12 @@ window.utils = {
     deepCopy: function (data) {
         return JSON.parse(JSON.stringify(data));
     },
+
+    countProperty: function (obj) {
+        if (!obj) {
+            return 0;
+        }
+
+        return Object.getOwnPropertyNames(obj).length;
+    },
 };

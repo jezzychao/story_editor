@@ -59,7 +59,7 @@ var Notify = {
         }
 
         // 清空没有通知对象的事件
-        if (require("DY").utils.countProperty(tm) <= 0) {
+        if (utils.countProperty(tm) <= 0) {
             delete this._targets[name];
         }
     },
@@ -93,7 +93,7 @@ var Notify = {
                 delete item[tk];
 
                 // 清空没有通知对象的事件
-                if (require("DY").utils.countProperty(item) <= 0) {
+                if (utils.countProperty(item) <= 0) {
                     delete this._targets[key];
                 }
             }
@@ -158,8 +158,31 @@ window.msg = {
         "RENAME_THE_FILE": 3,
         "DELETE_THE_FILE": 4,
 
+        "CREATE_A_PLOT_VEC": 5,//新建一张剧情图
+        "REMOVE_A_PLOT_VEC": 6,//删除一张剧情图
+        "OPEN_A_PLOT_VEC": 7,//打开一张剧情图
+        "SET_MARK_A_PLOT_VEC": 8,//标注一张剧情图
+
+        "SAVE": 9,//保存数据
+
+        "REMOVE_A_RECT_ITEM": 10,//删除一个 rect
+
         "UI_UPDATE_FILE_NAME": 1001,//更新文件名称
         "UI_UPDATE_ALL_INSPECTORS": 1002,//更新所有的界面显示
         "UI_UPDATE_FILES_LIST": 1003,//更新文件列表
+        "UI_MARK_THE_FILE_AS_OPENED": 1004,//标记文件为打开
+
+        "UI_UNINIT_ALL_MODULES": 1101,//清理所有的可编辑模块，文件模块除外
+        "UI_INIT_ALL_MODULES": 1102,//初始化所有的可编辑模块，文件模块除外
+
+        "UI_ADD_A_PLOT_VEC": 1104,//在剧情图列表中新增一个item
+        "UI_DEL_A_PLOT_VEC": 1105,//在剧情图列表中删除一个item
+        "UI_UPDATE_PLOT_VEC_INSPECTOR": 1106,//重置剧情图列表
+        "UI_OPEN_THE_PLOT_VEC": 1107,//打开一个剧情图
+        "UI_MARK_THE_PLOT_VEC": 1108,//设置备注名一个剧情图
+
+        "UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH": 1201,//将右侧的监视面板切换到 PACKAGE_INSPECTOR，并且更新界面
+        "UI_LINK_TO_OTHER_RECT": 1202,//将一个 rect 链接到另一个 rect
+        "UI_DISABLE_CENTER_VIEW_MOVE": 1203,//禁用中心视窗的移动
     }
 }
