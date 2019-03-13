@@ -5,6 +5,10 @@ cc.Class({
     properties: {
         scrollview: cc.ScrollView,
         content: cc.Node,
+
+        testArrow: require("ArrowItem"),
+        testRect1: require("RectItem"),
+        testRect2: require("RectItem"),
     },
 
     onLoad() {
@@ -19,6 +23,8 @@ cc.Class({
     },
 
     start() {
-
+        this.testArrow.init(this.testRect1, this.testRect2);
+        this.testRect1.attachArrow(this.testArrow);
+        this.testRect2.attachArrow(this.testArrow);
     },
 });

@@ -56,10 +56,6 @@ cc.Class({
         }, this);
     },
 
-    modifyName: function (name) {
-        this.Label.string = name;
-    },
-
     markColor: function (isOpened) {
         this.node.color = isOpened ? cc.Color.BLUE : cc.Color.WHITE;
     },

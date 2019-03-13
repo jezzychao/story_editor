@@ -12,6 +12,7 @@ cc.Class({
     },
 
     onLoad() {
+        let self = this;
         this.node.on(cc.Node.EventType.TOUCH_START, function (e) {
             msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
         });
@@ -20,7 +21,7 @@ cc.Class({
             var delta = event.touch.getDelta();
             this.x += delta.x;
             this.y += delta.y;
-            this.mArrows.forEach(arrow => { arrow.follow(this.node); });
+            self.mArrows.forEach(arrow => { arrow.follow(self.node); });
             this.mIsMove = true;
         }, this.node);
         this.node.on(cc.Node.EventType.TOUCH_END, function () {
@@ -34,11 +35,19 @@ cc.Class({
     },
 
     attachArrow: function (arrow) {
-
+        let index = this.mArrows.findIndex(v => v.__instanceId == arrow.__instanceId);
+        if (index == -1) {
+            this.mArrows.push(arrow);
+        }else{
+            console.error(`already exist arrow`)
+        }
     },
 
     detachArrow: function (arrow) {
-
+        let index = this.mArrows.findIndex(v => v.__instanceId == arrow.__instanceId);
+        if (index != -1) {
+            this.mArrows.splice(i, 1);
+        }
     },
 
     _onMouseClick: function (event) {
