@@ -23116,9 +23116,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 100,
-      "g": 99,
-      "b": 96,
+      "r": 221,
+      "g": 87,
+      "b": 87,
       "a": 255
     },
     "_cascadeOpacityEnabled": true,
@@ -24063,15 +24063,11 @@
     "content": {
       "__id__": 650
     },
-    "testArrow": {
-      "__id__": 659
-    },
-    "testRect1": {
-      "__id__": 671
-    },
-    "testRect2": {
-      "__id__": 697
-    }
+    "pfbRectItem": null,
+    "pfbArrowItem": null,
+    "nodRectRoot": null,
+    "nodArrowRoot": null,
+    "nodPool": null
   },
   {
     "__type__": "cc.Node",
