@@ -3,20 +3,33 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-
     },
 
     ctor() {
         this.mIsMove = false;
         this.mArrows = [];
+
+        this.mUid = null;
+
+        this.mFirstUid = null
+        this.mOriginalColor = null;
     },
 
     onLoad() {
+        this.Label = this.node.getChildByName('Label').getComponent(cc.Label);
+        this.EditBox = this.node.getChildByName('InputName').getComponent(cc.EditBox);
+
         let self = this;
         this.node.on(cc.Node.EventType.TOUCH_START, function (e) {
+            if (CURR_STATE === OPERATE_STATE.START_LINK) {
+                return;
+            }
             msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
         });
         this.node.on(cc.Node.EventType.TOUCH_MOVE, function (event) {
+            if (CURR_STATE === OPERATE_STATE.START_LINK) {
+                return;
+            }
             this.opacity = 100;
             var delta = event.touch.getDelta();
             this.x += delta.x;
@@ -25,20 +38,34 @@ cc.Class({
             this.mIsMove = true;
         }, this.node);
         this.node.on(cc.Node.EventType.TOUCH_END, function () {
+            if (CURR_STATE === OPERATE_STATE.START_LINK) {
+                return;
+            }
             if (this.mIsMove) {
                 this.mIsMove = false;
                 this.opacity = 255;
             }
             msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, false);
+            msg.send(msg.key.UPDATE_THE_PACKAGE_POS, { uid: self.mUid, pos: utils.convertFromV2(self.node.position) });
         }, this.node);
         this.node.on(cc.Node.EventType.MOUSE_DOWN, (event) => { this._onMouseClick(event); });
+
+        msg.register(this, msg.key.UI_START_LINK_TO_OTHER_RECT, (tag, key, param) => { this._onStartLink(param); }, this);
+        msg.register(this, msg.key.UI_END_LINK_TO_OTHER_RECT, (tag, key, param) => { this._onEndLink(param); }, this);
+
+    },
+
+    init: function (uid, pos, remark) {
+        this.mArrows.length = 0;
+        this.mUid = uid;
+        this.position = pos;
     },
 
     attachArrow: function (arrow) {
         let index = this.mArrows.findIndex(v => v.__instanceId == arrow.__instanceId);
         if (index == -1) {
             this.mArrows.push(arrow);
-        }else{
+        } else {
             console.error(`already exist arrow`)
         }
     },
@@ -50,35 +77,92 @@ cc.Class({
         }
     },
 
+    hide: function () {
+        this.node.active = false;
+    },
+
+    show: function () {
+        this.node.active = true;
+    },
+
     _onMouseClick: function (event) {
         let self = this;
         let mouseType = event.getButton();
         if (mouseType == 0) {//cc.Event.EventMouse.BUTTON_LEFT
             console.log('click mouse left button');
             console.log('refresh right inspector');
-            self.onBtnLeftClick();
-            msg.send(msg.key.UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH);
+            if (CURR_STATE === OPERATE_STATE.START_LINK) {
+                if (this.mUid != this.mFirstUid && packageModel.getBeginUid() != this.mUid) {
+                    window.CURR_STATE = window.OPERATE_STATE.NONE;
+                    msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, false);
+                    msg.send(msg.key.UI_END_LINK_TO_OTHER_RECT, this.mUid);
+                }
+            } else {
+                msg.send(msg.key.UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH);
+            }
         } else if (mouseType == 1) {//cc.Event.EventMouse.BUTTON_RIGHT
+
+            if (CURR_STATE === OPERATE_STATE.START_LINK) {
+                return;
+            }
             console.log('click mouse right button');
-            self.onBtnRightClick();
             require('Menu').CreateMenu((menu) => {
                 let worldPos = self.node.convertToWorldSpaceAR(cc.v2(0, 0));
                 menu.setPosition(worldPos);
                 menu.addAct("连接到", () => {
-                    msg.send(msg.key.UI_LINK_TO_OTHER_RECT);
+                    window.CURR_STATE = window.OPERATE_STATE.START_LINK;
+                    msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
+                    msg.send(msg.key.UI_START_LINK_TO_OTHER_RECT, this.mUid);
+                });
+                menu.addAct("修改备注", () => {
+                    self._setRemark();
                 });
                 menu.addAct("删除", () => {
-                    msg.send(msg.key.REMOVE_A_RECT_ITEM);
+                    msg.send(msg.key.REMOVE_A_RECT_ITEM, this.mUid);
                 });
             });
         }
     },
 
-    onBtnLeftClick: function () {
-
+    _onStartLink: function (uid) {
+        this.mFirstUid = uid;
+        let isCanLink = this.mFirstUid != this.mUid && packageModel.getBeginUid() != this.mUid;
+        this.mOriginalColor = this.color;
+        if (isCanLink) {
+            this._showCanLink();
+        } else {
+            this._showCanntLink();
+        }
     },
 
-    onBtnRightClick: function () {
+    _onEndLink: function (endUid) {
+        this.color = this.mOriginalColor;
+        if (this.mUid == endUid) {
+            //TODO: 完成链接操作
+            window.CURR_STATE = window.OPERATE_STATE.START_LINK;
+            msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
 
+        }
+    },
+
+    _setRemark: function () {
+        this.Label.node.active = false;
+        this.EditBox.node.active = true;
+        this.EditBox.string = this.Label.string;
+        this.EditBox.node.targetOff(this);
+        this.EditBox.node.on('editing-did-ended', (event) => {
+            this.Label.string = this.EditBox.string;
+            this.Label.node.active = true;
+            this.EditBox.node.active = false;
+            msg.send(msg.key.UPDATE_THE_PACKAGE_REMARK, { uid: this.mUid, remark: this.Label.string });
+        }, this);
+    },
+
+    _showCanLink: function () {
+        this.color = cc.Color.YELLOW;
+    },
+
+    _showCanntLink: function () {
+        this.color = cc.Color.GRAY;
     },
 });

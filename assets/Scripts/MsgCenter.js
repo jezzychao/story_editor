@@ -167,6 +167,9 @@ window.msg = {
 
         "REMOVE_A_RECT_ITEM": 10,//删除一个 rect
 
+        "UPDATE_THE_PACKAGE_POS": 11,//更新剧情包所在位置
+        "UPDATE_THE_PACKAGE_REMARK": 12,//更新剧情包备注
+
         "UI_UPDATE_FILE_NAME": 1001,//更新文件名称
         "UI_UPDATE_ALL_INSPECTORS": 1002,//更新所有的界面显示
         "UI_UPDATE_FILES_LIST": 1003,//更新文件列表
@@ -182,7 +185,11 @@ window.msg = {
         "UI_MARK_THE_PLOT_VEC": 1108,//设置备注名一个剧情图
 
         "UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH": 1201,//将右侧的监视面板切换到 PACKAGE_INSPECTOR，并且更新界面
-        "UI_LINK_TO_OTHER_RECT": 1202,//将一个 rect 链接到另一个 rect
+        "UI_START_LINK_TO_OTHER_RECT": 1202,//将一个 rect 链接到另一个 rect
         "UI_DISABLE_CENTER_VIEW_MOVE": 1203,//禁用中心视窗的移动
+        
+        "UI_REFRESH_All_RECT": 1204,//刷新中心视窗所有的rect
+        "UI_END_LINK_TO_OTHER_RECT": 1205,//将一个 rect 链接到另一个 rect
+        // "UI_REFRESH_CENTER_VIEW":1205,//刷新中心视窗
     }
 }
