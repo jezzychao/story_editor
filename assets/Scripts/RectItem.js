@@ -52,13 +52,14 @@ cc.Class({
 
         msg.register(this, msg.key.UI_START_LINK_TO_OTHER_RECT, (tag, key, param) => { this._onStartLink(param); }, this);
         msg.register(this, msg.key.UI_END_LINK_TO_OTHER_RECT, (tag, key, param) => { this._onEndLink(param); }, this);
-
     },
 
     init: function (uid, pos, remark) {
         this.mArrows.length = 0;
         this.mUid = uid;
-        this.position = pos;
+        this.node.position = pos;
+        this.Label.string = remark;
+        console.log(`rect uid: ${uid}, pos: ${pos}`);
     },
 
     attachArrow: function (arrow) {
@@ -92,7 +93,7 @@ cc.Class({
             console.log('click mouse left button');
             console.log('refresh right inspector');
             if (CURR_STATE === OPERATE_STATE.START_LINK) {
-                if (this.mUid != this.mFirstUid && packageModel.getBeginUid() != this.mUid) {
+                if (PlotVecCtrl.isCanLink(this.mFirstUid, this.mUid)) {
                     window.CURR_STATE = window.OPERATE_STATE.NONE;
                     msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, false);
                     msg.send(msg.key.UI_END_LINK_TO_OTHER_RECT, this.mUid);
@@ -126,9 +127,8 @@ cc.Class({
 
     _onStartLink: function (uid) {
         this.mFirstUid = uid;
-        let isCanLink = this.mFirstUid != this.mUid && packageModel.getBeginUid() != this.mUid;
-        this.mOriginalColor = this.color;
-        if (isCanLink) {
+        this.mOriginalColor = this.node.color;
+        if (PlotVecCtrl.isCanLink(this.mFirstUid, this.mUid)) {
             this._showCanLink();
         } else {
             this._showCanntLink();
@@ -136,12 +136,11 @@ cc.Class({
     },
 
     _onEndLink: function (endUid) {
-        this.color = this.mOriginalColor;
+        this.node.color = this.mOriginalColor;
         if (this.mUid == endUid) {
-            //TODO: 完成链接操作
-            window.CURR_STATE = window.OPERATE_STATE.START_LINK;
-            msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
-
+            //TODO: 完成链接操作, beginuid mFirstUid, enduid endUid
+            console.log(`finish link=========================================== first: ${this.mFirstUid}, second: ${this.mUid}`);
+            msg.send(msg.key.CREATE_A_NEW_LINKER, { first: this.mFirstUid, second: this.mUid });
         }
     },
 
@@ -159,10 +158,10 @@ cc.Class({
     },
 
     _showCanLink: function () {
-        this.color = cc.Color.YELLOW;
+        this.node.color = cc.Color.YELLOW;
     },
 
     _showCanntLink: function () {
-        this.color = cc.Color.GRAY;
+        this.node.color = cc.Color.GRAY;
     },
 });

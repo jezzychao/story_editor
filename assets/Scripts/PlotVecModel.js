@@ -47,6 +47,8 @@ vector struct{
     arrows:{
         id:{
             id;
+            begin; 起始剧情包 、、//delete
+            end; 结束剧情包
             compound: [
                 id, operator, id operator, id
             ]
@@ -134,15 +136,20 @@ var PlotVecModel = (function () {
             DialogModel.init(allPlotVec[openedUid]['dialogs']);
             TriggerModel.init(allPlotVec[openedUid]['triggers']);
             ArrowModel.init(allPlotVec[openedUid]['arrows']);
+            PlotVecCtrl.init();
+            msg.send(msg.key.UI_INIT_OPERATION_MOULES);
+
         }
     }
 
     function _uninitSubModules() {
         if (openedUid) {
+            PlotVecCtrl.uninit();
             PackageModel.uninit();
             DialogModel.uninit();
             TriggerModel.uninit();
             ArrowModel.uninit();
+            msg.send(msg.key.UI_CLEAR_OPERATION_MOULES);
         }
     }
 
@@ -256,13 +263,14 @@ var PlotVecModel = (function () {
 packages:{
         uid:{
 
-            pos:node.position
+            pos:node.position delete
 
             uid;
             type;
             remark;
             dialogIds:[];
             triggerIds:[];
+            inArrowIds:[] delete
             arrowIds:[];
             options:[
                 {
@@ -282,22 +290,28 @@ var PackageModel = (function () {
     var ret = {
         init: function (param, baseuid) {
             model = param;
+            console.log('model data===========================================');
+            console.log(JSON.stringify(model));
             maxUid = _getMaxUid(baseuid);
             if (!model) {
+                model = {};
                 _createNew(1, "开始", cc.v2(0, 300));
             }
-            msg.send(msg.key.UI_REFRESH_All_RECT, model);
-
+            console.log('model data===========================================');
+            console.log(JSON.stringify(model));
             msg.register('PackageModel', msg.key.UPDATE_THE_PACKAGE_POS, (tag, key, param) => { _updatePos(param['uid'], param['pos']); }, this);
             msg.register('PackageModel', msg.key.UPDATE_THE_PACKAGE_REMARK, (tag, key, param) => { _updateRemark(param['uid'], param['remark']); }, this);
             msg.register('PackageModel', msg.key.REMOVE_A_RECT_ITEM, (tag, key, param) => { _remove(param); }, this);
+            msg.register('PackageModel', msg.key.CREATE_A_RECT, (tag, key, param) => {
+                let newrect = _createNew(2, "新的剧情包", param);
+                msg.send(msg.key.UI_CREATE_A_NEW_RECT, newrect);
+            }, this);
         },
 
         uninit: function () {
             model = null;
             maxUid = null;
             msg.cancelAll('PackageModel')
-            msg.send(msg.key.UI_REFRESH_All_RECT, null);
         },
 
         get: function () {
@@ -313,6 +327,14 @@ var PackageModel = (function () {
                 }
             }
             return null
+        },
+
+        getModel: function () {
+            return model;
+        },
+
+        addArrows: function (uid, arrowId) {
+            model[uid]['arrowIds'].push(arrowId);
         },
     };
 
@@ -337,22 +359,23 @@ var PackageModel = (function () {
         obj['type'] = type;
         obj['remark'] = remark;
         obj['arrowIds'] = [];
+        obj['inArrowIds'] = [];
         if (type == 1) {
             //create begin point
             model[obj['uid']] = obj;
-            return;
+            return obj;
         }
         obj['dialogIds'] = [];
         obj['triggerIds'] = [];
         if (type == 2) {
             //create normal package
             model[obj['uid']] = obj;
-            return;
+            return obj;
         }
         obj['options'] = [];
         if (type == 3) {
             model[obj['uid']] = obj;
-            return;
+            return obj;
         }
         console.error('ERROR------------------------->> this type is undefined!!! type: ' + type);
     }
@@ -382,7 +405,7 @@ var DialogModel = (function () {
     var model = null;
     var ret = {
         init: function (param) {
-            model = param;
+            model = param || {};
 
         },
 
@@ -403,7 +426,7 @@ var TriggerModel = (function () {
     var model = null;
     var ret = {
         init: function (param) {
-            model = param;
+            model = param || {};
         },
 
         uninit: function () {
@@ -417,12 +440,41 @@ var TriggerModel = (function () {
 
     return ret;
 })();
+
+/*
+arrows:{
+        id:{
+            id;
+            begin; 起始剧情包 、、//delete
+            end; 结束剧情包
+            compound: [
+                id, operator, id operator, id
+            ]
+            conds:[
+                {
+                    id;
+                    type;1.配置表中的条件数据
+
+                    if type ==1
+                        cond;(string)
+                        remark;
+                    elif type == 2
+                        packageId;
+                        categroy; 1.完成状态 2.完成次数 3.选项状态 4.选项次数
+                        param;根据不同的 category 自己组合的参数
+                },
+                ...
+            ]
+        },
+        ...
+    }
+*/
 
 var ArrowModel = (function () {
     var model = null;
     var ret = {
         init: function (param) {
-            model = param;
+            model = param || {};
         },
 
         uninit: function () {
@@ -433,10 +485,37 @@ var ArrowModel = (function () {
         get: function () {
             return utils.deepCopy(model);
         },
+
+        createNew: function (begin, end) {
+            return _createSimple(begin, end)['id'];
+        },
     };
+
+    function _createSimple(begin, end) {
+        var arrow = {};
+        arrow['id'] = _genId();
+        arrow['begin'] = begin;
+        if (end) {
+            arrow['end'] = end;
+        }
+        model[arrow['id']] = arrow;
+        return arrow;
+    }
+
+    function _genId() {
+        let allIds = Object.keys(model);
+        allIds.sort();
+        if (!allIds.length) {
+            return 1;
+        }
+        return allIds[allIds.length - 1] + 1;
+    }
 
     return ret;
 })();
 
-window.plotVecModel = PlotVecModel;
-window.packageModel = PackageModel;
+window.PlotVecModel = PlotVecModel;
+window.PackageModel = PackageModel;
+window.ArrowModel = ArrowModel;
+window.DialogModel = DialogModel;
+window.TriggerModel = TriggerModel;

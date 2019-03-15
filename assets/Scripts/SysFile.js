@@ -147,8 +147,8 @@ var FileMgr = (function (helper) {
             msg.send(msg.key.SAVE);
 
             openedFilename = filename;
-            plotVecModel.uninit();
-            plotVecModel.init(openedFilename);
+            PlotVecModel.uninit();
+            PlotVecModel.init(openedFilename);
 
             msg.send(msg.key.UI_MARK_THE_FILE_AS_OPENED, openedFilename);
             console.log(`open file: ${filename} successfully`);
@@ -162,7 +162,7 @@ var FileMgr = (function (helper) {
         if (helper.fileExist(filename)) {
             if (helper.removeFile(filename)) {
                 if (openedFilename == filename) {
-                    plotVecModel.uninit();
+                    PlotVecModel.uninit();
                     msg.send(msg.key.UI_MARK_THE_FILE_AS_OPENED, openedFilename);
                     openedFilename = null;
                 }

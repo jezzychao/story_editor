@@ -7,17 +7,21 @@ cc.Class({
     },
 
     ctor() {
+        this.mId = null;
         this.mStartRect = null;
         this.mEndRect = null;
     },
 
-    init: function (startRect, endRect) {
+    init: function (id, startRect, endRect) {
+        this.mId = id;
         if (!startRect) {
             console.error(`Start Rect Item do not exist!!!`);
             return;
         }
         this.mStartRect = startRect.node;
-        this.mEndRect = endRect.node;
+        if (endRect) {
+            this.mEndRect = endRect.node;
+        }
         this.node.position = this.mStartRect.position;
         if (this.mEndRect) {
             this.follow(this.mStartRect);
@@ -25,6 +29,24 @@ cc.Class({
             this.node.width = 200;
             this.node.rotation = 45;
         }
+    },
+
+    // setBegin: function(){
+
+    // },
+
+
+    hide: function () {
+        this.node.active = false;
+    },
+
+    show: function () {
+        this.node.active = true;
+    },
+
+    setEnd: function (endRect) {
+        this.mEndRect = endRect.node;
+        this.follow(this.mStartRect);
     },
 
     _computeEndPos: function () {
@@ -63,6 +85,6 @@ cc.Class({
         }
     },
 
-
+    
 
 });

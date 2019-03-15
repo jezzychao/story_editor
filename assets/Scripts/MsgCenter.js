@@ -169,6 +169,8 @@ window.msg = {
 
         "UPDATE_THE_PACKAGE_POS": 11,//更新剧情包所在位置
         "UPDATE_THE_PACKAGE_REMARK": 12,//更新剧情包备注
+        "CREATE_A_RECT":13,//创建一个新的剧情包
+        "CREATE_A_NEW_LINKER":14,//创建一个新的连接
 
         "UI_UPDATE_FILE_NAME": 1001,//更新文件名称
         "UI_UPDATE_ALL_INSPECTORS": 1002,//更新所有的界面显示
@@ -187,9 +189,17 @@ window.msg = {
         "UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH": 1201,//将右侧的监视面板切换到 PACKAGE_INSPECTOR，并且更新界面
         "UI_START_LINK_TO_OTHER_RECT": 1202,//将一个 rect 链接到另一个 rect
         "UI_DISABLE_CENTER_VIEW_MOVE": 1203,//禁用中心视窗的移动
-        
+
         "UI_REFRESH_All_RECT": 1204,//刷新中心视窗所有的rect
         "UI_END_LINK_TO_OTHER_RECT": 1205,//将一个 rect 链接到另一个 rect
+
+        "UI_INIT_OPERATION_MOULES": 1206,
+        "UI_CLEAR_OPERATION_MOULES": 1207,
+
+        "UI_CREATE_A_NEW_RECT":1208,//新建一个rect
+        "UI_DRAW_LINK":1209,//
+        // "UI_CREATE_A_NEW_RECT":1208,//新建一个rect
+
         // "UI_REFRESH_CENTER_VIEW":1205,//刷新中心视窗
     }
 }
