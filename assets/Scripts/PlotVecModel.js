@@ -336,6 +336,11 @@ var PackageModel = (function () {
         addArrows: function (uid, arrowId) {
             model[uid]['arrowIds'].push(arrowId);
         },
+
+        //添加入度箭头
+        addInArrows: function (uid, arrowId) {
+            model[uid]['inArrowIds'].push(arrowId);
+        },
     };
 
     function _getMaxUid(baseuid) {
@@ -417,6 +422,10 @@ var DialogModel = (function () {
         get: function () {
             return utils.deepCopy(model);
         },
+
+        getModel: function () {
+            return model;
+        }
     };
 
     return ret;
@@ -435,6 +444,10 @@ var TriggerModel = (function () {
 
         get: function () {
             return utils.deepCopy(model);
+        },
+
+        getModel: function () {
+            return model;
         },
     };
 
@@ -489,6 +502,8 @@ var ArrowModel = (function () {
         createNew: function (begin, end) {
             return _createSimple(begin, end)['id'];
         },
+
+        getModel: function () { return model; },
     };
 
     function _createSimple(begin, end) {

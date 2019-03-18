@@ -42,6 +42,9 @@ cc.Class({
         msg.register(this, msg.key.UI_DRAW_LINK, (tag, key, param) => {
             this._link2Rects(param);
         }, this);
+        msg.register(this, msg.key.UI_REMOVE_A_RECT, (tag, key, param) => {
+            this._deleteARect(param);
+        }, this);
     },
 
     onDestroy() {
@@ -52,7 +55,8 @@ cc.Class({
         this.nodContent.position = cc.v2(0, 0);
         this.scrollview.enabled = true;
         this._refreshAllRects(PackageModel.getModel());
-        this.node.on(cc.Node.EventType.MOUSE_DOWN, (event) => { this._onMouseClick(event); });
+        this._refreshAllArrows(ArrowModel.getModel());
+        this.node.on(cc.Node.EventType.MOUSE_DOWN, (event) => { this._onMouseClick(event); }, this);
     },
 
     _clear: function () {
@@ -129,6 +133,14 @@ cc.Class({
         }
     },
 
+    _refreshAllArrows: function (model) {
+        if (model) {
+            for (let arrowId in model) {
+                this._link2Rects(model[arrowId]);
+            }
+        }
+    },
+
     _createAArrow: function (id, beginRect, endRect) {
         if (this.mPoolArrows.length) {
             var arrowItem = this.mPoolArrows.shift();
@@ -166,6 +178,16 @@ cc.Class({
         beginRect.attachArrow(this.mAllArrows[arrowId]);
         if (endRect) {
             endRect.attachArrow(this.mAllArrows[arrowId]);
+        }
+    },
+
+    _deleteARect: function (deleteInfo) {
+        let self = this;
+        self._removeARect(deleteInfo['rectUid']);
+        if (deleteInfo['arrowIds']) {
+            deleteInfo['arrowIds'].forEach(arrowId => {
+                self._removeAArrow(arrowId);
+            });
         }
     },
 });

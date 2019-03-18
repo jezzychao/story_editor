@@ -198,6 +198,7 @@ window.msg = {
 
         "UI_CREATE_A_NEW_RECT":1208,//新建一个rect
         "UI_DRAW_LINK":1209,//
+        "UI_REMOVE_A_RECT":1210,
         // "UI_CREATE_A_NEW_RECT":1208,//新建一个rect
 
         // "UI_REFRESH_CENTER_VIEW":1205,//刷新中心视窗

@@ -86,6 +86,16 @@ cc.Class({
         this.node.active = true;
     },
 
+    clear: function () {
+        this.mIsMove = false;
+        this.mArrows.length = 0;
+
+        this.mUid = null;
+
+        this.mFirstUid = null
+        this.mOriginalColor = null;
+    },
+
     _onMouseClick: function (event) {
         let self = this;
         let mouseType = event.getButton();
@@ -113,13 +123,13 @@ cc.Class({
                 menu.addAct("连接到", () => {
                     window.CURR_STATE = window.OPERATE_STATE.START_LINK;
                     msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
-                    msg.send(msg.key.UI_START_LINK_TO_OTHER_RECT, this.mUid);
+                    msg.send(msg.key.UI_START_LINK_TO_OTHER_RECT, self.mUid);
                 });
                 menu.addAct("修改备注", () => {
                     self._setRemark();
                 });
                 menu.addAct("删除", () => {
-                    msg.send(msg.key.REMOVE_A_RECT_ITEM, this.mUid);
+                    msg.send(msg.key.REMOVE_A_RECT_ITEM, self.mUid);
                 });
             });
         }
@@ -138,7 +148,6 @@ cc.Class({
     _onEndLink: function (endUid) {
         this.node.color = this.mOriginalColor;
         if (this.mUid == endUid) {
-            //TODO: 完成链接操作, beginuid mFirstUid, enduid endUid
             console.log(`finish link=========================================== first: ${this.mFirstUid}, second: ${this.mUid}`);
             msg.send(msg.key.CREATE_A_NEW_LINKER, { first: this.mFirstUid, second: this.mUid });
         }

@@ -34,8 +34,6 @@ cc.Class({
     // setBegin: function(){
 
     // },
-
-
     hide: function () {
         this.node.active = false;
     },
