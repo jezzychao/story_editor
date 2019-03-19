@@ -63,7 +63,8 @@ cc.Class({
     },
 
     attachArrow: function (arrow) {
-        let index = this.mArrows.findIndex(v => v.__instanceId == arrow.__instanceId);
+        let index = this.mArrows.findIndex(v => v.getId() == arrow.getId());
+
         if (index == -1) {
             this.mArrows.push(arrow);
         } else {
@@ -72,9 +73,9 @@ cc.Class({
     },
 
     detachArrow: function (arrow) {
-        let index = this.mArrows.findIndex(v => v.__instanceId == arrow.__instanceId);
+        let index = this.mArrows.findIndex(v => v.getId() == arrow.getId());
         if (index != -1) {
-            this.mArrows.splice(i, 1);
+            this.mArrows.splice(index, 1);
         }
     },
 
@@ -106,10 +107,10 @@ cc.Class({
                 if (PlotVecCtrl.isCanLink(this.mFirstUid, this.mUid)) {
                     window.CURR_STATE = window.OPERATE_STATE.NONE;
                     msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, false);
-                    msg.send(msg.key.UI_END_LINK_TO_OTHER_RECT, this.mUid);
+                    msg.send(msg.key.UI_END_LINK_TO_OTHER_RECT, { endUid: self.mUid });
                 }
             } else {
-                msg.send(msg.key.UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH);
+                msg.send(msg.key.UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH, self.mUid);
             }
         } else if (mouseType == 1) {//cc.Event.EventMouse.BUTTON_RIGHT
 
@@ -123,7 +124,7 @@ cc.Class({
                 menu.addAct("连接到", () => {
                     window.CURR_STATE = window.OPERATE_STATE.START_LINK;
                     msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
-                    msg.send(msg.key.UI_START_LINK_TO_OTHER_RECT, self.mUid);
+                    msg.send(msg.key.UI_START_LINK_TO_OTHER_RECT, { rectId: self.mUid });
                 });
                 menu.addAct("修改备注", () => {
                     self._setRemark();
@@ -135,8 +136,9 @@ cc.Class({
         }
     },
 
-    _onStartLink: function (uid) {
-        this.mFirstUid = uid;
+    _onStartLink: function (param) {
+        this.mFirstUid = param['rectId'];
+        this.mTempArrowId = param['arrowId'];
         this.mOriginalColor = this.node.color;
         if (PlotVecCtrl.isCanLink(this.mFirstUid, this.mUid)) {
             this._showCanLink();
@@ -145,11 +147,15 @@ cc.Class({
         }
     },
 
-    _onEndLink: function (endUid) {
+    _onEndLink: function (param) {
         this.node.color = this.mOriginalColor;
-        if (this.mUid == endUid) {
-            console.log(`finish link=========================================== first: ${this.mFirstUid}, second: ${this.mUid}`);
-            msg.send(msg.key.CREATE_A_NEW_LINKER, { first: this.mFirstUid, second: this.mUid });
+        if (this.mUid == param['endUid']) {
+            if (this.mTempArrowId) {
+                //TODO: modify linker
+                msg.send(msg.key.MODIFY_THE_END_OF_LINKER, { first: this.mFirstUid, second: this.mUid, arrowId: this.mTempArrowId });
+            } else {
+                msg.send(msg.key.CREATE_A_NEW_LINKER, { first: this.mFirstUid, second: this.mUid });
+            }
         }
     },
 

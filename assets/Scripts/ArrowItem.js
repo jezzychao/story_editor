@@ -12,6 +12,10 @@ cc.Class({
         this.mEndRect = null;
     },
 
+    onLoad() {
+        this.node.on(cc.Node.EventType.MOUSE_DOWN, (event) => { this._onMouseClick(event); });
+    },
+
     init: function (id, startRect, endRect) {
         this.mId = id;
         if (!startRect) {
@@ -38,13 +42,27 @@ cc.Class({
         this.node.active = false;
     },
 
+    getId: function(){
+        return this.mId;
+    },
+
     show: function () {
         this.node.active = true;
     },
 
+    clear: function () {
+        this.mId = null;
+        this.mStartRect = null;
+        this.mEndRect = null;
+    },
+
     setEnd: function (endRect) {
-        this.mEndRect = endRect.node;
-        this.follow(this.mStartRect);
+        if (endRect) {
+            this.mEndRect = endRect.node;
+            this.follow(this.mStartRect);
+        } else {
+            this.mEndRect = null;
+        }
     },
 
     _computeEndPos: function () {
@@ -83,6 +101,35 @@ cc.Class({
         }
     },
 
-    
+    _onMouseClick: function (event) {
+        let self = this;
+        if (CURR_STATE === OPERATE_STATE.START_LINK) {
+            return;
+        }
+        let mouseType = event.getButton();
+        if (mouseType == 0) {//cc.Event.EventMouse.BUTTON_LEFT
+            msg.send(msg.key.UI_SWITCH_TO_ARROW_INSPECTOR_AND_REFRESH, this.mId);
+        } else if (mouseType == 1) {//cc.Event.EventMouse.BUTTON_RIGHT
+
+            console.log('click mouse right button');
+            require('Menu').CreateMenu((menu) => {
+                let clickpos = event.getLocation();
+                menu.setPosition(clickpos);
+                menu.addAct("重新连接", () => {
+                    CURR_STATE = OPERATE_STATE.START_LINK;
+                    msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
+                    let rectId = ArrowModel.getSingle(this.mId)['begin'];
+                    let param = { rectId: rectId, arrowId: self.mId };
+                    msg.send(msg.key.UI_START_LINK_TO_OTHER_RECT, param);
+                });
+                menu.addAct("删除", () => {
+                    msg.send(msg.key.REMOVE_A_ARROW_ITEM, self.mId);
+                });
+            });
+        }
+    },
+
+
+
 
 });

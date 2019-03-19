@@ -29,6 +29,17 @@ var utils = {
     convertFromV2: function (v2) {
         return { 'x': v2.x, 'y': v2.y };
     },
+
+    findIndex: function (arr, predicate) {
+        let index = -1;
+        for (let i = 0; i < arr.length; ++i) {
+            if (predicate(arr[i])) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    },
 };
 
 window.utils = utils;

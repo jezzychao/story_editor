@@ -171,6 +171,8 @@ window.msg = {
         "UPDATE_THE_PACKAGE_REMARK": 12,//更新剧情包备注
         "CREATE_A_RECT":13,//创建一个新的剧情包
         "CREATE_A_NEW_LINKER":14,//创建一个新的连接
+        "MODIFY_THE_END_OF_LINKER":15,//重置箭头的后置连接
+        "REMOVE_A_ARROW_ITEM":16,
 
         "UI_UPDATE_FILE_NAME": 1001,//更新文件名称
         "UI_UPDATE_ALL_INSPECTORS": 1002,//更新所有的界面显示
@@ -199,6 +201,9 @@ window.msg = {
         "UI_CREATE_A_NEW_RECT":1208,//新建一个rect
         "UI_DRAW_LINK":1209,//
         "UI_REMOVE_A_RECT":1210,
+        "UI_SWITCH_TO_ARROW_INSPECTOR_AND_REFRESH":1211,
+        "UI_RELINK_A_ARROW":1212,
+        "UI_REMOVE_A_ARROW":1213,
         // "UI_CREATE_A_NEW_RECT":1208,//新建一个rect
 
         // "UI_REFRESH_CENTER_VIEW":1205,//刷新中心视窗

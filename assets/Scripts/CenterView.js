@@ -19,7 +19,6 @@ cc.Class({
         nodRectRoot: cc.Node,
         nodArrowRoot: cc.Node,
         nodPool: cc.Node,
-
     },
 
     ctor() {
@@ -45,6 +44,18 @@ cc.Class({
         msg.register(this, msg.key.UI_REMOVE_A_RECT, (tag, key, param) => {
             this._deleteARect(param);
         }, this);
+        msg.register(this, msg.key.UI_RELINK_A_ARROW, (tag, key, param) => {
+            this._resetALinker(param);
+        }, this);
+        msg.register(this, msg.key.UI_REMOVE_A_ARROW, (tag, key, param) => {
+            this._deleteAArrow(param);
+        }, this);
+        // msg.register(this, msg.key.UI_START_LINK_TO_OTHER_RECT, (tag, key, param) => {
+        //     this.node.on(cc.Node.EventType.MOUSE_LEAVE, this._onMouseLeave, this);
+        // }, this);
+        // msg.register(this, msg.key.UI_END_LINK_TO_OTHER_RECT, (tag, key, param) => {
+        //     this.node.off(cc.Node.EventType.MOUSE_LEAVE, this._onMouseLeave, this);
+        // }, this);
     },
 
     onDestroy() {
@@ -59,10 +70,17 @@ cc.Class({
         this.node.on(cc.Node.EventType.MOUSE_DOWN, (event) => { this._onMouseClick(event); }, this);
     },
 
+    _onMouseLeave: function () {
+        CURR_STATE = OPERATE_STATE.NONE;
+        msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, false);
+        msg.send(msg.key.UI_END_LINK_TO_OTHER_RECT, { endUid: null });
+    },
+
     _clear: function () {
         this.node.targetOff(this);
         this.scrollview.enabled = false;
         this._removeAllRects();
+        this._removeAllArrows();
     },
 
     _refreshAllRects: function (model) {
@@ -86,6 +104,7 @@ cc.Class({
     _removeARect: function (uid) {
         let rectItem = this.mAllRects[uid];
         if (rectItem) {
+            rectItem.clear();
             rectItem.hide();
             rectItem.node.parent = this.nodPool;
             this.mPoolRects.push(rectItem);
@@ -120,8 +139,6 @@ cc.Class({
         let mouseType = event.getButton();
         if (mouseType == 1) {//cc.Event.EventMouse.BUTTON_RIGHT
             let clickpos = event.getLocation();
-            console.log(`click position: ${event.getLocation()}`);
-            console.log('click mouse right button');
             // let lcpos = self.nodContent.convertToNodeSpaceAR(clickpos);
             require('Menu').CreateMenu((menu) => {
                 menu.setPosition(clickpos);
@@ -157,6 +174,7 @@ cc.Class({
     _removeAArrow: function (id) {
         let arrowItem = this.mAllArrows[id];
         if (arrowItem) {
+            arrowItem.clear();
             arrowItem.hide();
             arrowItem.node.parent = this.nodPool;
             this.mPoolArrows.push(arrowItem);
@@ -183,11 +201,35 @@ cc.Class({
 
     _deleteARect: function (deleteInfo) {
         let self = this;
-        self._removeARect(deleteInfo['rectUid']);
-        if (deleteInfo['arrowIds']) {
-            deleteInfo['arrowIds'].forEach(arrowId => {
-                self._removeAArrow(arrowId);
-            });
+        if (deleteInfo['inArrows']) {
+            for (let arrowId in deleteInfo['inArrows']) {
+                self.mAllArrows[arrowId].setEnd(null);
+            }
         }
+        if (deleteInfo['outArrows']) {
+            for (let arrowId in deleteInfo['outArrows']) {
+                let endRectId = deleteInfo['outArrows'][arrowId];
+                self.mAllRects[endRectId].detachArrow(self.mAllArrows[arrowId]);
+                self._removeAArrow(arrowId);
+            }
+        }
+        self._removeARect(deleteInfo['rectUid']);
+    },
+
+    _resetALinker: function (param) {
+        var arrowId = param['id']
+        var endRect = this.mAllRects[param['end']];
+        this.mAllArrows[arrowId].setEnd(endRect);
+        endRect.attachArrow(this.mAllArrows[arrowId]);
+    },
+
+    _deleteAArrow: function (param) {
+        let arrowId = param['id'], begin = param['begin'], end = param['end'];
+        let arrowItem = this.mAllArrows[arrowId];
+        this.mAllRects[begin].detachArrow(arrowItem);
+        if (end) {
+            this.mAllRects[end].detachArrow(arrowItem);
+        }
+        this._removeAArrow(arrowId);
     },
 });

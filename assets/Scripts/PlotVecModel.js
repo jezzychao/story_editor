@@ -333,14 +333,49 @@ var PackageModel = (function () {
             return model;
         },
 
+        getSingle: function (uid) {
+            if (model[uid]) {
+                return model[uid];
+            }
+            return null;
+        },
+
         addArrows: function (uid, arrowId) {
-            model[uid]['arrowIds'].push(arrowId);
+            if (model[uid]) {
+                let index = utils.findIndex(model[uid]['arrowIds'], (v) => { return v == arrowId; });
+                if (index == -1) {
+                    model[uid]['arrowIds'].push(arrowId);
+                }
+            }
+        },
+
+        delArrow: function (uid, arrowId) {
+            if (model[uid]) {
+                let index = utils.findIndex(model[uid]['arrowIds'], (v) => { return v == arrowId; });
+                if (index != -1) {
+                    model[uid]['arrowIds'].splice(index, 1);
+                }
+            }
         },
 
         //添加入度箭头
         addInArrows: function (uid, arrowId) {
-            model[uid]['inArrowIds'].push(arrowId);
+            if (model[uid]) {
+                let index = utils.findIndex(model[uid]['inArrowIds'], (v) => { return v == arrowId; });
+                if (index == -1) {
+                    model[uid]['inArrowIds'].push(arrowId);
+                }
+            }
         },
+
+        delInArrow: function (uid, arrowId) {
+            if (model[uid]) {
+                let index = utils.findIndex(model[uid]['inArrowIds'], (v) => { return v == arrowId; });
+                if (index != -1) {
+                    model[uid]['inArrowIds'].splice(index, 1);
+                }
+            }
+        }
     };
 
     function _getMaxUid(baseuid) {
@@ -350,7 +385,7 @@ var PackageModel = (function () {
         if (model) {
             let tks = Object.keys(model).map(v => parseInt(v));
             tks.sort();
-            return tks[tks.length - 1];
+            return tks[tks.length - 1] + 1;
         } else {
             return baseuid;
         }
@@ -406,6 +441,24 @@ var PackageModel = (function () {
     return ret;
 })();
 
+/**
+ 
+ dialogs:{
+        id: {
+            id;
+            role;
+            music;
+            sound;
+            cg;
+            bg;
+            spd;
+            shake;
+            events:[]
+            text;
+        },
+        ...
+    }
+ */
 var DialogModel = (function () {
     var model = null;
     var ret = {
@@ -416,7 +469,6 @@ var DialogModel = (function () {
 
         uninit: function () {
             model = null;
-
         },
 
         get: function () {
@@ -425,8 +477,35 @@ var DialogModel = (function () {
 
         getModel: function () {
             return model;
-        }
+        },
+
+        createNew: function () {
+            let obj = {
+                id: _genId(),
+                role: null,
+                music: config.DEFAULT_BGM,
+                sound: null,
+                cg: null,
+                bg: null,
+                spd: config.DEFAULT_SPEED,
+                shake: 0,
+                events: [],
+                text: '',
+            };
+            model[obj['id']] = obj;
+            return obj;
+        },
     };
+
+    function _genId() {
+        let allIds = Object.keys(model);
+        allIds.sort();
+        if (!allIds.length) {
+            return 1;
+        }
+        let currmax = allIds[allIds.length - 1];
+        return parseInt(currmax) + 1;
+    }
 
     return ret;
 })();
@@ -450,6 +529,16 @@ var TriggerModel = (function () {
             return model;
         },
     };
+
+    function _genId() {
+        let allIds = Object.keys(model);
+        allIds.sort();
+        if (!allIds.length) {
+            return 1;
+        }
+        let currmax = allIds[allIds.length - 1];
+        return parseInt(currmax) + 1;
+    }
 
     return ret;
 })();
@@ -492,7 +581,6 @@ var ArrowModel = (function () {
 
         uninit: function () {
             model = null;
-
         },
 
         get: function () {
@@ -504,14 +592,27 @@ var ArrowModel = (function () {
         },
 
         getModel: function () { return model; },
+
+        getSingle: function (arrowId) {
+            if (model[arrowId]) {
+                return model[arrowId];
+            }
+            return null;
+        },
+
+        delSingal: function (arrowId) {
+            if (model[arrowId]) {
+                delete model[arrowId];
+            }
+        },
     };
 
     function _createSimple(begin, end) {
         var arrow = {};
         arrow['id'] = _genId();
-        arrow['begin'] = begin;
+        arrow['begin'] = parseInt(begin);
         if (end) {
-            arrow['end'] = end;
+            arrow['end'] = parseInt(end);
         }
         model[arrow['id']] = arrow;
         return arrow;
@@ -523,7 +624,8 @@ var ArrowModel = (function () {
         if (!allIds.length) {
             return 1;
         }
-        return allIds[allIds.length - 1] + 1;
+        let currmax = allIds[allIds.length - 1];
+        return parseInt(currmax) + 1;
     }
 
     return ret;
