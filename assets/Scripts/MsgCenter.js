@@ -204,6 +204,8 @@ window.msg = {
         "UI_SWITCH_TO_ARROW_INSPECTOR_AND_REFRESH":1211,
         "UI_RELINK_A_ARROW":1212,
         "UI_REMOVE_A_ARROW":1213,
+
+        "UI_MARK_AS_GLOBAL_RECT":1214,
         // "UI_CREATE_A_NEW_RECT":1208,//新建一个rect
 
         // "UI_REFRESH_CENTER_VIEW":1205,//刷新中心视窗

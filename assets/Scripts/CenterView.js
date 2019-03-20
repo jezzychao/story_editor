@@ -50,6 +50,9 @@ cc.Class({
         msg.register(this, msg.key.UI_REMOVE_A_ARROW, (tag, key, param) => {
             this._deleteAArrow(param);
         }, this);
+        msg.register(this, msg.key.UI_MARK_AS_GLOBAL_RECT, (tag, key, param) => {
+            this.mAllRects[param['uid']].markAsGlobal(param['state']);
+        }, this);
         // msg.register(this, msg.key.UI_START_LINK_TO_OTHER_RECT, (tag, key, param) => {
         //     this.node.on(cc.Node.EventType.MOUSE_LEAVE, this._onMouseLeave, this);
         // }, this);

@@ -40,6 +40,16 @@ var utils = {
         }
         return index;
     },
+
+    clamp: function (res, min, max) {
+        if (res < min) {
+            return min;
+        }
+        if (res > max) {
+            return max;
+        }
+        return res;
+    },
 };
 
 window.utils = utils;

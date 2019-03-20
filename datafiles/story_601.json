@@ -1,1 +1,158 @@
-{"1":{"uid":1,"remark":"新的剧情图","packages":{"1":{"pos":{"x":28.0009765625,"y":375.99853515625},"uid":1,"type":1,"remark":"开始","arrowIds":[1,12],"inArrowIds":[]},"3":{"pos":{"x":-568.7441101074219,"y":198.24972534179688},"uid":3,"type":2,"remark":"B","arrowIds":["11",13],"inArrowIds":[1],"dialogIds":[],"triggerIds":[]},"5":{"pos":{"x":409.25775146484375,"y":120.24786376953125},"uid":5,"type":2,"remark":"D","arrowIds":[],"inArrowIds":[12],"dialogIds":[],"triggerIds":[]},"6":{"pos":{"x":-386.7428894042969,"y":-13.744369506835938},"uid":6,"type":2,"remark":"E","arrowIds":[],"inArrowIds":[13],"dialogIds":[],"triggerIds":[]}},"dialogs":{},"triggers":{},"arrows":{"1":{"id":1,"begin":"1","end":"3"},"11":{"id":"11","begin":"3","end":5},"12":{"id":12,"begin":"1","end":5},"13":{"id":13,"begin":3,"end":6}}}}
+{
+    "1": {
+        "uid": 1,
+        "remark": "新的剧情图",
+        "packages": {
+            "1": {
+                "pos": {
+                    "x": 28.0009765625,
+                    "y": 375.99853515625
+                },
+                "uid": 1,
+                "type": 1,
+                "remark": "开始",
+                "arrowIds": [
+                    1,
+                    12
+                ],
+                "inArrowIds": []
+            },
+            "3": {
+                "pos": {
+                    "x": -568.7441101074219,
+                    "y": 198.24972534179688
+                },
+                "uid": 3,
+                "type": 2,
+                "remark": "B",
+                "arrowIds": [
+                    "11",
+                    13
+                ],
+                "inArrowIds": [
+                    1
+                ],
+                "dialogIds": [
+                    1,
+                    3,
+                    2,
+                    4
+                ],
+                "triggerIds": [],
+                "isGlobal": 1
+            },
+            "5": {
+                "pos": {
+                    "x": 409.25775146484375,
+                    "y": 120.24786376953125
+                },
+                "uid": 5,
+                "type": 2,
+                "remark": "D",
+                "arrowIds": [],
+                "inArrowIds": [
+                    12
+                ],
+                "dialogIds": [],
+                "triggerIds": []
+            },
+            "6": {
+                "pos": {
+                    "x": -386.7428894042969,
+                    "y": -13.744369506835938
+                },
+                "uid": 6,
+                "type": 2,
+                "remark": "E",
+                "arrowIds": [],
+                "inArrowIds": [
+                    13
+                ],
+                "dialogIds": [],
+                "triggerIds": []
+            }
+        },
+        "dialogs": {
+            "1": {
+                "id": 1,
+                "role": 1,
+                "music": 1,
+                "sound": 1,
+                "cg": "ccc",
+                "bg": "bbb",
+                "spd": "101",
+                "shake": 1,
+                "events": [
+                    1001,
+                    1002
+                ],
+                "text": "我也不知道这是什么操作"
+            },
+            "2": {
+                "id": 2,
+                "role": null,
+                "music": 1,
+                "sound": null,
+                "cg": "",
+                "bg": "",
+                "spd": "10",
+                "shake": 0,
+                "events": [
+                    null
+                ],
+                "text": "对话2"
+            },
+            "3": {
+                "id": 3,
+                "role": null,
+                "music": 1,
+                "sound": null,
+                "cg": "",
+                "bg": "",
+                "spd": "10",
+                "shake": 0,
+                "events": [
+                    null
+                ],
+                "text": "对话3"
+            },
+            "4": {
+                "id": 4,
+                "role": null,
+                "music": 1,
+                "sound": null,
+                "cg": "",
+                "bg": "",
+                "spd": "10",
+                "shake": 0,
+                "events": [
+                    null
+                ],
+                "text": "对话4"
+            }
+        },
+        "triggers": {},
+        "arrows": {
+            "1": {
+                "id": 1,
+                "begin": "1",
+                "end": "3"
+            },
+            "11": {
+                "id": "11",
+                "begin": "3",
+                "end": 5
+            },
+            "12": {
+                "id": 12,
+                "begin": "1",
+                "end": 5
+            },
+            "13": {
+                "id": 13,
+                "begin": 3,
+                "end": 6
+            }
+        }
+    }
+}

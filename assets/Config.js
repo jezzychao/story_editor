@@ -6,12 +6,18 @@ const config = {
 
     DEFAULT_BGM: 1,
 
-    BGM_LIB: {
-        1: 'xxx',
+    MUSIC_LIB: {
+        1: {
+            music: 'xxx',
+            remark: '默认音乐',
+        },
     },
 
     SOUND_LIB: {
-        1: 'xxx',
+        1:{
+            sound:'xxxxx',
+            remark:'未知音效'
+        },
     },
 
     CHARACTER_LIB: {

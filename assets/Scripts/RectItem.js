@@ -16,6 +16,7 @@ cc.Class({
     },
 
     onLoad() {
+        // this.mOriginalColor = this.node.color;
         this.Label = this.node.getChildByName('Label').getComponent(cc.Label);
         this.EditBox = this.node.getChildByName('InputName').getComponent(cc.EditBox);
 
@@ -95,6 +96,11 @@ cc.Class({
 
         this.mFirstUid = null
         this.mOriginalColor = null;
+    },
+
+    markAsGlobal: function(state){
+        // let color = state?cc.
+        //TODO:标记为全局
     },
 
     _onMouseClick: function (event) {

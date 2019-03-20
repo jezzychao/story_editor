@@ -267,6 +267,7 @@ packages:{
 
             uid;
             type;
+            isGlobal;
             remark;
             dialogIds:[];
             triggerIds:[];
