@@ -23,20 +23,18 @@
                     "y": 198.24972534179688
                 },
                 "uid": 3,
-                "type": 2,
+                "type": 3,
                 "remark": "B",
-                "arrowIds": [
-                    "11",
-                    13
-                ],
+                "arrowIds": [],
                 "inArrowIds": [
                     1
                 ],
                 "dialogIds": [
                     1,
-                    3,
                     2,
-                    4
+                    3,
+                    5,
+                    6
                 ],
                 "triggerIds": [],
                 "isGlobal": 1
@@ -52,22 +50,21 @@
                 "arrowIds": [],
                 "inArrowIds": [
                     12
-                ],
+                ],triggerData
                 "dialogIds": [],
-                "triggerIds": []
+                "triggerIds": [],
+                "isGlobal": 0
             },
             "6": {
                 "pos": {
                     "x": -386.7428894042969,
-                    "y": -13.744369506835938
+                    "y": -29.744705200195312
                 },
                 "uid": 6,
                 "type": 2,
                 "remark": "E",
                 "arrowIds": [],
-                "inArrowIds": [
-                    13
-                ],
+                "inArrowIds": [],
                 "dialogIds": [],
                 "triggerIds": []
             }
@@ -116,19 +113,29 @@
                 ],
                 "text": "对话3"
             },
-            "4": {
-                "id": 4,
+            "5": {
+                "id": 5,
                 "role": null,
                 "music": 1,
                 "sound": null,
-                "cg": "",
-                "bg": "",
-                "spd": "10",
+                "cg": null,
+                "bg": null,
+                "spd": 10,
                 "shake": 0,
-                "events": [
-                    null
-                ],
-                "text": "对话4"
+                "events": [],
+                "text": ""
+            },
+            "6": {
+                "id": 6,
+                "role": null,
+                "music": 1,
+                "sound": null,
+                "cg": null,
+                "bg": null,
+                "spd": 10,
+                "shake": 0,
+                "events": [],
+                "text": ""
             }
         },
         "triggers": {},
@@ -138,20 +145,10 @@
                 "begin": "1",
                 "end": "3"
             },
-            "11": {
-                "id": "11",
-                "begin": "3",
-                "end": 5
-            },
             "12": {
                 "id": 12,
                 "begin": "1",
                 "end": 5
-            },
-            "13": {
-                "id": 13,
-                "begin": 3,
-                "end": 6
             }
         }
     }

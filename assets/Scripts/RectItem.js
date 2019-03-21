@@ -1,4 +1,8 @@
-
+const Colors = {
+    'start': cc.Color.GREEN,
+    'normal': cc.Color.GRAY,
+    'option': cc.Color.ORANGE,
+}
 cc.Class({
     extends: cc.Component,
 
@@ -61,6 +65,10 @@ cc.Class({
         this.node.position = pos;
         this.Label.string = remark;
         console.log(`rect uid: ${uid}, pos: ${pos}`);
+
+        let data = PackageModel.getSingle(this.mUid);
+        let color = data['type'] == 1 ? Colors['start'] : data['type'] == 2 ? Colors['normal'] : Colors['option'];
+        this.node.color = color;
     },
 
     attachArrow: function (arrow) {
@@ -98,8 +106,7 @@ cc.Class({
         this.mOriginalColor = null;
     },
 
-    markAsGlobal: function(state){
-        // let color = state?cc.
+    markAsGlobal: function (state) {
         //TODO:标记为全局
     },
 
@@ -132,9 +139,39 @@ cc.Class({
                     msg.send(msg.key.UI_DISABLE_CENTER_VIEW_MOVE, true);
                     msg.send(msg.key.UI_START_LINK_TO_OTHER_RECT, { rectId: self.mUid });
                 });
+
+                let data = PackageModel.getSingle(self.mUid);
+                let type = data['type'];
+                if (type == 1) {
+                    return;
+                }
                 menu.addAct("修改备注", () => {
                     self._setRemark();
                 });
+                if (type == 2) {
+                    menu.addAct('设为选项式', () => {
+                        data['type'] = 3;
+                        self._clearAllOutArrows();
+                        self.node.color = Colors['option'];
+                    });
+                } else if (type == 3) {
+                    menu.addAct('设为普通式', () => {
+                        data['type'] = 2;
+                        self._clearAllOutArrows();
+                        self.node.color = Colors['normal'];
+                    });
+                }
+                if (data['isGlobal']) {
+                    menu.addAct('取消全局', () => {
+                        data['isGlobal'] = 0;
+                        self._markAsGlobal(0);
+                    });
+                } else {
+                    menu.addAct('设为全局', () => {
+                        data['isGlobal'] = 1;
+                        self._markAsGlobal(1);
+                    });
+                }
                 menu.addAct("删除", () => {
                     msg.send(msg.key.REMOVE_A_RECT_ITEM, self.mUid);
                 });
@@ -157,7 +194,6 @@ cc.Class({
         this.node.color = this.mOriginalColor;
         if (this.mUid == param['endUid']) {
             if (this.mTempArrowId) {
-                //TODO: modify linker
                 msg.send(msg.key.MODIFY_THE_END_OF_LINKER, { first: this.mFirstUid, second: this.mUid, arrowId: this.mTempArrowId });
             } else {
                 msg.send(msg.key.CREATE_A_NEW_LINKER, { first: this.mFirstUid, second: this.mUid });
@@ -184,5 +220,23 @@ cc.Class({
 
     _showCanntLink: function () {
         this.node.color = cc.Color.GRAY;
+    },
+
+    _createMenu: function () {
+
+    },
+
+    _markAsGlobal: function (state) {
+        this.node.getChildByName('GlobalMark').active = state;
+    },
+
+    _clearAllOutArrows: function () {
+        let data = PackageModel.getSingle(this.mUid);
+        if (data['arrowIds'] && data['arrowIds'].length) {
+            let len = data['arrowIds'].length;
+            for (let i = 0; i < len; ++i) {
+                msg.send(msg.key.REMOVE_A_ARROW_ITEM, data['arrowIds'][0]);
+            }
+        }
     },
 });

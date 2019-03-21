@@ -33,6 +33,8 @@ cc.Class({
             this.node.width = 200;
             this.node.rotation = 45;
         }
+
+        this.node.color = ArrowModel.getSingle(this.mId)['isOption'] ? cc.Color.RED : cc.Color.CYAN;
     },
 
     // setBegin: function(){
@@ -42,7 +44,7 @@ cc.Class({
         this.node.active = false;
     },
 
-    getId: function(){
+    getId: function () {
         return this.mId;
     },
 

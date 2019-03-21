@@ -10,14 +10,6 @@ vector struct{
             dialogIds:[];
             triggerIds:[];
             arrowIds:[];
-            options:[
-                {
-                    arrowId;
-                    text;
-                    activecond;
-                    displaycond;
-                }
-            ]
         },
         ...
     } 
@@ -266,21 +258,13 @@ packages:{
             pos:node.position delete
 
             uid;
-            type;
+            type;//1.start 2.normal 3.option
             isGlobal;
             remark;
             dialogIds:[];
             triggerIds:[];
             inArrowIds:[] delete
             arrowIds:[];
-            options:[
-                {
-                    arrowId;
-                    text;
-                    activecond;
-                    displaycond;
-                }
-            ]
         },
         ...
     } 
@@ -413,7 +397,6 @@ var PackageModel = (function () {
             model[obj['uid']] = obj;
             return obj;
         }
-        obj['options'] = [];
         if (type == 3) {
             model[obj['uid']] = obj;
             return obj;
@@ -550,10 +533,25 @@ arrows:{
             id;
             begin; 起始剧情包 、、//delete
             end; 结束剧情包
-            compound: [
-                id, operator, id operator, id
-            ]
-            conds:[
+
+            //只有选项式才会存在以下内容
+            text: 选项式剧情的文本
+            isOption:是否为选项式
+            activecond：类似 cond
+            displaycond:类似 cond
+
+            //只有一般的arrow才会存在该属性
+            cond: 'id&id|id'
+
+            triggers:[{
+                {
+                    id
+                    type:
+                    param:
+                }
+            }]
+
+            subConds:[
                 {
                     id;
                     type;1.配置表中的条件数据
@@ -606,6 +604,7 @@ var ArrowModel = (function () {
                 delete model[arrowId];
             }
         },
+
     };
 
     function _createSimple(begin, end) {
@@ -615,6 +614,11 @@ var ArrowModel = (function () {
         if (end) {
             arrow['end'] = parseInt(end);
         }
+
+        if (PackageModel.getSingle(begin)['type'] == 3) {
+            arrow['isOption'] = 1;
+        }
+
         model[arrow['id']] = arrow;
         return arrow;
     }

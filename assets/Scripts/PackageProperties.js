@@ -5,13 +5,10 @@ cc.Class({
     properties: {
         nodPool: cc.Node,
 
-        optionToggle: cc.Toggle,
-        globalToggle: cc.Toggle,
-        btnViewOptions: cc.Button,
+        btnTabs: [cc.Button],
 
         nodPartOne: cc.Node,
         nodPartTwo: cc.Node,
-        nodPartThree: cc.Node,
 
         btnAdd: cc.Button,
         pfbStoryItem: cc.Prefab,
@@ -28,6 +25,8 @@ cc.Class({
         editboxEvents: cc.EditBox,
         editboxText: cc.EditBox,
 
+        editboxOptions: cc.EditBox,
+
         // editbox
     },
 
@@ -40,8 +39,9 @@ cc.Class({
         this.mPoolItems = [];
         this.mAllItems = {};
 
-        this.mIsViewingOptions = false;
         this.mIsAlreadyRefreshOps = false;
+
+        this.mCurrTabIndex = -1;
     },
 
     onLoad() {
@@ -49,8 +49,9 @@ cc.Class({
         msg.register(this, msg.key.UI_INIT_OPERATION_MOULES, (tag, key, param) => { this._init(param); }, this);
         msg.register(this, msg.key.UI_CLEAR_OPERATION_MOULES, (tag, key, param) => { this._uninit(param); }, this);
 
-        msg.register(this, msg.key.UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH, (tag, key, param) => { this.node.active = true; this._refreshAll(param); }, this);
+        msg.register(this, msg.key.UI_SWITCH_TO_PACKAGE_INSPECTOR_AND_REFRESH, (tag, key, param) => { this._refreshAll(param); }, this);
         msg.register(this, msg.key.UI_SWITCH_TO_ARROW_INSPECTOR_AND_REFRESH, (tag, key, param) => { this.node.active = false; }, this);
+
     },
 
     onDestroy() {
@@ -64,35 +65,9 @@ cc.Class({
             this.mPackageData['dialogIds'].push(newDialog['id']);
             this._createItem(newDialog['id']);
             this._onItemClick(newDialog['id']);
-        } else if (tag.name === 'BtnViewOption') {
-            if (this.mIsViewingOptions) {
-                this.nodPartOne.active = true;
-                this.nodPartTwo.active = true;
-                this.nodPartThree.active = false;
-                if (!this.mIsAlreadyRefreshOps) {
-                    this.mIsAlreadyRefreshOps = true;
-                    this._refreshOptions();
-                }
-            } else {
-                this.nodPartOne.active = false;
-                this.nodPartTwo.active = false;
-                this.nodPartThree.active = true;
-            }
+        } else if (tag.name === 'BtnViewDialog') {
+            this._switchTab(0)
         }
-    },
-
-    onOptionToggle: function (event) {
-        console.log(this.optionToggle.isChecked);
-        //TODO: 创建选项和创建后置连接arrow
-    },
-
-    onGlobalToggle: function (event) {
-        this.mPackageData['isGlobal'] = this.globalToggle.isChecked ? 1 : 0;
-        let param = {
-            uid: this.mPackageData['uid'],
-            state: this.globalToggle.isChecked,
-        };
-        msg.send(msg.key.UI_MARK_AS_GLOBAL_RECT, param);
     },
 
     onShakeToggle: function () {
@@ -148,65 +123,72 @@ cc.Class({
         dialog['cg'] = this.editboxCg.string;
         dialog['bg'] = this.editboxBg.string;
         dialog['spd'] = this.editboxSpd.string;
-        dialog['events'] = this.editboxEvents.string.split(';').map(v => parseInt(v));
+        if (this.editboxEvents.string != '') {
+            dialog['events'] = this.editboxEvents.string.split(';').map(v => parseInt(v));
+        } else {
+            dialog['events'] = [];
+        }
         dialog['text'] = this.editboxText.string;
         this._refreshStoryDetail();
+    }, 
+
+    onFinishInputOptionsCnt: function(){
+        this.mPackageData['options'].length
+    },
+
+    _switchTab: function (index) {
+        if (this.mCurrTabIndex == index) {
+            return;
+        }
+        this.mCurrTabIndex = index;
+        if (this.mCurrTabIndex == 0) {
+            this.nodPartOne.active = true;
+            this.nodPartTwo.active = true;
+        } else if (this.mCurrTabIndex == 1) {
+            this.nodPartOne.active = false;
+            this.nodPartTwo.active = false;
+        }
+        for (let i = 0; i < this.btnTabs.length; ++i) {
+            this.btnTabs[i].node.color = i == index ? cc.Color.YELLOW : cc.Color.GRAY;
+        }
     },
 
     _init: function () {
         this.mPackageData = null;
         this.mDialogsData = null;
         this.mCurrSelectedStoryId = null;
+        this.mIsAlreadyRefreshOps = false;
         this.node.active = false;
+        this.mCurrTabIndex = -1;
     },
 
     _uninit: function () {
-        this.mPackageData = null;
-        this.mDialogsData = null;
-        this.mCurrSelectedStoryId = null;
-        this.mIsViewingOptions = false;
-        this.mIsAlreadyRefreshOps = false;
-        this.node.active = false;
+        this._init();
         this._removeAllItems();
     },
 
     _refreshAll: function (uid) {
+        var packageData = PackageModel.getSingle(uid);
+        if (packageData['type'] == 1) {
+            this.node.active = false;
+            return;
+        }
         this._uninit();
-
-        this.mPackageData = PackageModel.getSingle(uid);
+        this.mPackageData = packageData;
         this.mDialogsData = DialogModel.getModel();
-
-        this.optionToggle.isChecked = this.mPackageData['type'] == 3;
-        this.globalToggle.isChecked = this.mPackageData['isGlobal'] ? true : false;
-
-        this.btnViewOptions.node.active = this.optionToggle.isChecked;
-        this.mIsViewingOptions = false;
-        this.mIsAlreadyRefreshOps = false;
-        this.nodPartOne.active = true;
+        this._switchTab(0);
         this.nodPartTwo.active = false;
-        this.nodPartThree.active = false;
         this.node.active = true;
-
-        this._refreshBtnView();
         this._refreshStoryItems();
         this._refreshStoryDetail();
     },
 
-    _refreshBtnView: function () {
-        if (this.btnViewOptions.node.active) {
-            let label = this.btnViewOptions.node.getChildByName('Label').getComponent(cc.Label);
-            if (this.mIsViewingOptions) {
-                label.string = "查看对话";
-            } else {
-                label.string = "查看选项";
-            }
-        }
-    },
-
     _refreshOptions: function () {
-        if (this.mPackageData['options'] && this.mPackageData['options'].length) {
-            //TODO:
+        let count = 0;
+        if (this.mPackageData['options']) {
+            count = this.mPackageData['options'].length;
         }
+        this.editboxOptions.string = count;
     },
 
     _refreshStoryItems: function () {
