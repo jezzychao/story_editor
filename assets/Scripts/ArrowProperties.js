@@ -66,8 +66,8 @@ cc.Class({
         this.nodTriggerPro.active = false;
 
         this.nodTextPro.getComponent(this.nodTextPro.name).init(this.mId);
-        this.nodCondPro_0.getComponent(this.nodCondPro_0.name).init(this.mId);
-        this.nodCondPro_1.getComponent(this.nodCondPro_1.name).init(this.mId);
+        this.nodCondPro_0.getComponent('CondProperties').init(this.mId, 'displaycond');
+        this.nodCondPro_1.getComponent('CondProperties').init(this.mId, 'activecond');
     },
 
     _updateNormalArrow: function () {
@@ -88,7 +88,7 @@ cc.Class({
         this.nodCondPro_1.active = false;
 
         this.nodTriggerPro.getComponent(this.nodTriggerPro.name).init(this.mId);
-        this.nodCondPro_0.getComponent(this.nodCondPro_0.name).init(this.mId);
+        this.nodCondPro_0.getComponent('CondProperties').init(this.mId, 'cond');
     },
 
     _onOptionArrowTabClick: function (idx) {

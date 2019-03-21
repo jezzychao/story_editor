@@ -541,7 +541,9 @@ arrows:{
             displaycond:类似 cond
 
             //只有一般的arrow才会存在该属性
-            cond: 'id&id|id'
+            cond: [
+                id,operator,id,operator,id
+            ]
 
             triggers:[{
                 {
@@ -605,6 +607,107 @@ var ArrowModel = (function () {
             }
         },
 
+        genTrigger: function (arrowId) {
+            var arrow = model[arrowId];
+            var ret = null;
+            if (arrow['triggers'] && arrow['triggers'].length) {
+                let maxId = 1;
+                arrow['triggers'].forEach(v => {
+                    if (v['id'] > maxId) {
+                        maxId = v['id'];
+                    }
+                })
+                ret = {
+                    id: ++maxId,
+                    type: 1
+                };
+                arrow['triggers'].push(ret);
+            } else {
+                ret = {
+                    id: 1,
+                    type: 1
+                };
+                arrow['triggers'] = [ret];
+            }
+            return ret;
+        },
+
+        getTrigger: function (arrowId, triggerId) {
+            if (model[arrowId]) {
+                let triggers = model[arrowId]['triggers'];
+                if (model[arrowId]['triggers']) {
+                    for (let i = 0; i < triggers.length; ++i) {
+                        if (triggers[i]['id'] == triggerId) {
+                            return triggers[i];
+                        }
+                    }
+                }
+            }
+            return null;
+        },
+
+        delTrigger: function (arrowId, triggerId) {
+            var arrow = model[arrowId];
+            if (arrow && arrow['triggers']) {
+                for (let i = 0; i < arrow['triggers'].length; ++i) {
+                    if (arrow['triggers'][i]['id'] == triggerId) {
+                        arrow['triggers'].splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        },
+
+        genSubCond: function (arrowId, type = 1) {
+            var arrow = model[arrowId];
+            var ret = null;
+            if (arrow['subConds'] && arrow['subConds'].length) {
+                let maxId = 1;
+                arrow['subConds'].forEach(v => {
+                    if (v['id'] > maxId) {
+                        maxId = v['id'];
+                    }
+                })
+                ret = {
+                    id: ++maxId,
+                    type: type
+                };
+                arrow['subConds'].push(ret);
+            } else {
+                ret = {
+                    id: 1,
+                    type: type
+                };
+                arrow['subConds'] = [ret];
+            }
+            return ret;
+        },
+
+        getSubCond: function (arrowId, condId) {
+            if (model[arrowId]) {
+                let subConds = model[arrowId]['subConds'];
+                if (model[arrowId]['subConds']) {
+                    for (let i = 0; i < subConds.length; ++i) {
+                        if (subConds[i]['id'] == condId) {
+                            return subConds[i];
+                        }
+                    }
+                }
+            }
+            return null;
+        },
+
+        delSubCond: function (arrowId, condId) {
+            var arrow = model[arrowId];
+            if (arrow && arrow['subConds']) {
+                for (let i = 0; i < arrow['subConds'].length; ++i) {
+                    if (arrow['subConds'][i]['id'] == condId) {
+                        arrow['subConds'].splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        },
     };
 
     function _createSimple(begin, end) {

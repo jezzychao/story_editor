@@ -19,13 +19,16 @@
             },
             "3": {
                 "pos": {
-                    "x": -568.7441101074219,
-                    "y": 198.24972534179688
+                    "x": -566.3250427246094,
+                    "y": 197.04019165039062
                 },
                 "uid": 3,
                 "type": 3,
                 "remark": "B",
-                "arrowIds": [],
+                "arrowIds": [
+                    13,
+                    14
+                ],
                 "inArrowIds": [
                     1
                 ],
@@ -41,16 +44,19 @@
             },
             "5": {
                 "pos": {
-                    "x": 409.25775146484375,
-                    "y": 120.24786376953125
+                    "x": 373.83905029296875,
+                    "y": 154.1912841796875
                 },
                 "uid": 5,
                 "type": 2,
                 "remark": "D",
-                "arrowIds": [],
+                "arrowIds": [
+                    15
+                ],
                 "inArrowIds": [
-                    12
-                ],triggerData
+                    12,
+                    14
+                ],
                 "dialogIds": [],
                 "triggerIds": [],
                 "isGlobal": 0
@@ -64,7 +70,10 @@
                 "type": 2,
                 "remark": "E",
                 "arrowIds": [],
-                "inArrowIds": [],
+                "inArrowIds": [
+                    13,
+                    15
+                ],
                 "dialogIds": [],
                 "triggerIds": []
             }
@@ -143,13 +152,100 @@
             "1": {
                 "id": 1,
                 "begin": "1",
-                "end": "3"
+                "end": "3",
+                "triggers": [
+                    {
+                        "id": 1,
+                        "type": "2"
+                    },
+                    {
+                        "id": 2,
+                        "type": "3",
+                        "param": "60101"
+                    },
+                    {
+                        "id": 3,
+                        "type": 1
+                    }
+                ],
+                "subConds": [
+                    {
+                        "id": 5,
+                        "type": 2
+                    },
+                    {
+                        "id": 7,
+                        "type": 1
+                    }
+                ],
+                "cond": [
+                    5,
+                    "|",
+                    7
+                ]
             },
             "12": {
                 "id": 12,
                 "begin": "1",
                 "end": 5
+            },
+            "13": {
+                "id": 13,
+                "begin": 3,
+                "end": 6,
+                "isOption": 1,
+                "text": "good"
+            },
+            "14": {
+                "id": 14,
+                "begin": 3,
+                "end": 5,
+                "isOption": 1,
+                "text": "没钱",
+                "subConds": [
+                    {
+                        "id": 1,
+                        "type": 2
+                    },
+                    {
+                        "id": 2,
+                        "type": 2
+                    },
+                    {
+                        "id": 3,
+                        "type": 1
+                    },
+                    {
+                        "id": 4,
+                        "type": 2
+                    },
+                    {
+                        "id": 5,
+                        "type": 2
+                    }
+                ],
+                "displaycond": [
+                    1,
+                    "|",
+                    2
+                ],
+                "activecond": [
+                    3,
+                    "|",
+                    4,
+                    "&",
+                    5
+                ]
+            },
+            "15": {
+                "id": 15,
+                "begin": 5,
+                "end": 6
             }
         }
+    },
+    "2": {
+        "uid": 2,
+        "remark": "新的剧情图"
     }
 }
