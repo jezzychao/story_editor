@@ -93,7 +93,7 @@ var PlotVecModel = (function () {
             msg.register('PlotVecModel', msg.key.CREATE_A_PLOT_VEC, (tag, key, param) => { _create(param); }, this);
             msg.register('PlotVecModel', msg.key.SAVE, (tag, key, param) => { _save(param); }, this);
 
-            allPlotVec = fileHelper.getJsonFromFile(opened);
+            allPlotVec = FileHelper.getJsonFromFile(opened);
             allUids = Object.keys(allPlotVec);
             if (allUids.length > 0) {
                 openedUid = allUids[0];
@@ -156,11 +156,11 @@ var PlotVecModel = (function () {
 
     function _save() {
         if (allPlotVec) {
-            let filename = fileMgr.getOpened();
+            let filename = FileMgr.getOpened();
             console.log('save filename: ' + filename);
             if (filename) {
                 _mergeSubModules();
-                fileHelper.writeJsonToFile(filename, allPlotVec);
+                FileHelper.writeJsonToFile(filename, allPlotVec);
             }
         }
     }
@@ -259,7 +259,7 @@ packages:{
 
             uid;
             type;//1.start 2.normal 3.option
-            isGlobal;
+            isOnce
             remark;
             dialogIds:[];
             triggerIds:[];

@@ -1,6 +1,6 @@
 const config = {
-    DATA_FILES_PATH: "E:/Projects/cocos/story_editor/datafiles",
-    // DATA_FILES_PATH: "E:/Workspace/HY2/story_editor/datafiles",
+    // DATA_FILES_PATH: "E:/Projects/cocos/story_editor/datafiles",
+    DATA_FILES_PATH: "E:/Workspace/HY2/story_editor/datafiles",
 
     DEFAULT_SPEED: 10,
 
@@ -41,6 +41,11 @@ const config = {
         },
         3: {
             name: '离开POT点',
+            extraParam: true,
+            intro: '这是该触发器类型的介绍',
+        },
+        4:{
+            name: '遇到NPC',
             extraParam: true,
             intro: '这是该触发器类型的介绍',
         },

@@ -23,7 +23,7 @@ cc.Class({
     },
 
     start() {
-        var allFiles = fileMgr.getAllFiles();
+        var allFiles = FileMgr.getAllFiles();
         if (!allFiles.length) {
             return;
         }

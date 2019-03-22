@@ -192,5 +192,5 @@ var FileMgr = (function (helper) {
     return ret;
 })(FileUtils);
 
-window.fileMgr = FileMgr;
-window.fileHelper = FileUtils;
+window.FileMgr = FileMgr;
+window.FileHelper = FileUtils;

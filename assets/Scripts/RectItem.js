@@ -160,15 +160,15 @@ cc.Class({
                         self._clearAllOutArrows();
                         self.node.color = Colors['normal'];
                     });
-                }
-                if (data['isGlobal']) {
-                    menu.addAct('取消全局', () => {
-                        data['isGlobal'] = 0;
+                } 
+                if (data['isOnce']) {
+                    menu.addAct('Cancel Once', () => {
+                        data['isOnce'] = 0;
                         self._markAsGlobal(0);
                     });
                 } else {
-                    menu.addAct('设为全局', () => {
-                        data['isGlobal'] = 1;
+                    menu.addAct('set Once', () => {
+                        data['isOnce'] = 1;
                         self._markAsGlobal(1);
                     });
                 }

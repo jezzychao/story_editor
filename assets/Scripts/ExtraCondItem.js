@@ -3,7 +3,8 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-
+        ebRemark: cc.EditBox,
+        ebCond: cc.EditBox,
     },
 
     ctor() {
@@ -14,7 +15,12 @@ cc.Class({
     init: function (cond, onDeleteEvent) {
         this.mCond = cond;
         this.mOnEvent = onDeleteEvent;
-        //TODO: refresh
+        if (this.mCond['remark']) {
+            this.ebRemark.string = this.mCond['remark'];
+        }
+        if (this.mCond['cond']) {
+            this.ebCond.string = this.mCond['cond'];
+        }
     },
 
     getValue: function () {
@@ -23,5 +29,14 @@ cc.Class({
 
     onDeleteBtnClick: function () {
         this.mOnEvent && this.mOnEvent(this.mCond['id']);
+    },
+
+    onEndInput: function () {
+        if (this.ebRemark.string) {
+            this.mCond['remark'] = this.ebRemark.string;
+        }
+        if (this.ebCond.string) {
+            this.mCond['cond'] = this.ebCond.string;
+        }
     },
 });
