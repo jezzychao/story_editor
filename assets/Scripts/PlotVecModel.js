@@ -120,6 +120,33 @@ var PlotVecModel = (function () {
             msg.cancelAll('PlotVecModel')
             _logInfo();
         },
+
+        getModel: function () {
+            return allPlotVec;
+        },
+
+        //每个剧情文件中对应的包id都是唯一的，所以放在这里生成id
+        genPackageUid: function () {
+            if (this.maxUid) {
+                ++this.maxUid;
+            } else {
+                let allUids = [];
+                for (let vecId in allPlotVec) {
+                    let packages = allPlotVec[vecId]['packages'];
+                    if (packages) {
+                        let tUids = Object.keys(packages);
+                        allUids = allUids.concat(tUids);
+                    }
+                }
+                allUids.sort();
+                this.maxUid = parseInt(allUids[allUids.length - 1]) + 1;
+            }
+            return this.maxUid;
+        },
+
+        save: function () {
+            _save();
+        },
     };
 
     function _initSubModules() {
@@ -260,6 +287,7 @@ packages:{
             uid;
             type;//1.start 2.normal 3.option
             isOnce
+            isGlobal : 0 //reference count ，如果该剧情包被其他的剧情文件所引用，则+1；被本文件所引用则不会递增
             remark;
             dialogIds:[];
             triggerIds:[];
@@ -271,13 +299,11 @@ packages:{
 */
 var PackageModel = (function () {
     var model = null;
-    var maxUid = null;
     var ret = {
         init: function (param, baseuid) {
             model = param;
             console.log('model data===========================================');
             console.log(JSON.stringify(model));
-            maxUid = _getMaxUid(baseuid);
             if (!model) {
                 model = {};
                 _createNew(1, "开始", cc.v2(0, 300));
@@ -286,7 +312,6 @@ var PackageModel = (function () {
             console.log(JSON.stringify(model));
             msg.register('PackageModel', msg.key.UPDATE_THE_PACKAGE_POS, (tag, key, param) => { _updatePos(param['uid'], param['pos']); }, this);
             msg.register('PackageModel', msg.key.UPDATE_THE_PACKAGE_REMARK, (tag, key, param) => { _updateRemark(param['uid'], param['remark']); }, this);
-            msg.register('PackageModel', msg.key.REMOVE_A_RECT_ITEM, (tag, key, param) => { _remove(param); }, this);
             msg.register('PackageModel', msg.key.CREATE_A_RECT, (tag, key, param) => {
                 let newrect = _createNew(2, "新的剧情包", param);
                 msg.send(msg.key.UI_CREATE_A_NEW_RECT, newrect);
@@ -295,7 +320,6 @@ var PackageModel = (function () {
 
         uninit: function () {
             model = null;
-            maxUid = null;
             msg.cancelAll('PackageModel')
         },
 
@@ -363,24 +387,11 @@ var PackageModel = (function () {
         }
     };
 
-    function _getMaxUid(baseuid) {
-        if (maxUid) {
-            return maxUid;
-        }
-        if (model) {
-            let tks = Object.keys(model).map(v => parseInt(v));
-            tks.sort();
-            return tks[tks.length - 1] + 1;
-        } else {
-            return baseuid;
-        }
-    }
-
     function _createNew(type, remark, v2) {
         let obj = {};
         obj['pos'] = { x: v2.x, y: v2.y };
 
-        obj['uid'] = maxUid++;
+        obj['uid'] = PlotVecModel.genPackageUid();
         obj['type'] = type;
         obj['remark'] = remark;
         obj['arrowIds'] = [];
@@ -402,12 +413,6 @@ var PackageModel = (function () {
             return obj;
         }
         console.error('ERROR------------------------->> this type is undefined!!! type: ' + type);
-    }
-
-    function _remove(uid) {
-        if (model[uid]) {
-            //TODO:删除所有的关联的 dialogs, triggers, arrows
-        }
     }
 
     function _updatePos(uid, pos) {
@@ -562,6 +567,7 @@ arrows:{
                         cond;(string)
                         remark;
                     elif type == 2
+                        file:
                         packageId;
                         categroy; 1.完成状态 2.完成次数 3.选项状态 4.选项次数
                         param;根据不同的 category 自己组合的参数
@@ -738,6 +744,76 @@ var ArrowModel = (function () {
 
     return ret;
 })();
+
+var DataCache = (function () {
+    var data = {};
+
+    var ret = {
+        getfiles: function () {
+            return FileMgr.getAllFiles();
+        },
+
+        getdata: function (filename) {
+            if (filename == FileMgr.getOpened()) {
+                return PlotVecModel.getModel();
+            }
+            if (!data[filename]) {
+                data[filename] = FileHelper.getJsonFromFile(filename);
+            }
+            return data[filename];
+        },
+
+        savedata: function (filename) {
+            if (filename == FileMgr.getOpened()) {
+                PlotVecModel.save();
+            } else {
+                if (data[filename]) {
+                    FileHelper.writeJsonToFile(filename, data[filename]);
+                }
+            }
+        },
+
+        getPackagesBrief: function (filename) {
+            let json = this.getdata(filename);
+            let allUids = {};
+            for (let vecId in json) {
+                let packages = json[vecId]['packages'];
+                if (packages) {
+                    for (let uid in packages) {
+                        allUids[uid] = packages[uid]['remark'];
+                    }
+                }
+            }
+            return allUids;
+        },
+
+        getPackage: function (filename, packageUid) {
+            let filedata = getdata(filename);
+            for (let vecId in filedata) {
+                let packages = filedata[vecId]['packages'];
+                if (packages[packageUid]) {
+                    return packages[packageUid];
+                }
+            }
+            console.error(`cannot get package data. file: ${filename}, uid: ${packageUid}`);
+        },
+        
+        getVector: function (filename, packageUid) {
+            let filedata = getdata(filename);
+            for (let vecId in filedata) {
+                let packages = filedata[vecId]['packages'];
+                if (packages[packageUid]) {
+                    return filedata[vecId];
+                }
+            }
+            console.error(`cannot get package data. file: ${filename}, uid: ${packageUid}`);
+        }
+
+    }
+    return ret;
+})()
+
+window.FileCache = DataCache;
 
 window.PlotVecModel = PlotVecModel;
 window.PackageModel = PackageModel;

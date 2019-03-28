@@ -91,6 +91,8 @@ var FileMgr = (function (helper) {
             return openedFilename;
         }
 
+
+
     };
 
     function _updateFiles() {

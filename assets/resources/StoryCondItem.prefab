@@ -64,7 +64,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 276,
-      "height": 47
+      "height": 135.7
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -134,7 +134,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": -122.5,
-      "y": 11.5
+      "y": 55.849999999999994
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -399,7 +399,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 111.6,
-      "y": -11
+      "y": 33.349999999999994
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -699,7 +699,7 @@
       }
     ],
     "_tag": -1,
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 27
@@ -738,7 +738,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 111.6,
-      "y": -22.5
+      "y": 10.349999999999994
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -1038,7 +1038,7 @@
       }
     ],
     "_tag": -1,
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 37
@@ -1077,7 +1077,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 111.6,
-      "y": -34
+      "y": -12.650000000000006
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -1383,7 +1383,7 @@
       }
     ],
     "_tag": -1,
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 170
@@ -1410,7 +1410,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 276,
-      "height": 64.4
+      "height": 40.7
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -1419,7 +1419,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": -13.299999999999997
+      "y": -25.150000000000006
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -2839,7 +2839,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "LabA",
+    "_name": "Lab",
     "_objFlags": 0,
     "_parent": {
       "__id__": 75
@@ -3169,7 +3169,7 @@
     },
     "_children": [],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 93
@@ -3253,7 +3253,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "LabB",
+    "_name": "Lab",
     "_objFlags": 0,
     "_parent": {
       "__id__": 88
@@ -3396,7 +3396,7 @@
       "__id__": 93
     },
     "checkEvents": [],
-    "_N$isChecked": true
+    "_N$isChecked": false
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -3573,7 +3573,7 @@
     },
     "_children": [],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 105
@@ -3657,7 +3657,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "LabC",
+    "_name": "Lab",
     "_objFlags": 0,
     "_parent": {
       "__id__": 100
@@ -3800,7 +3800,7 @@
       "__id__": 105
     },
     "checkEvents": [],
-    "_N$isChecked": true
+    "_N$isChecked": false
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -3977,7 +3977,7 @@
     },
     "_children": [],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 117
@@ -4061,7 +4061,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "LabD",
+    "_name": "Lab",
     "_objFlags": 0,
     "_parent": {
       "__id__": 112
@@ -4204,7 +4204,7 @@
       "__id__": 117
     },
     "checkEvents": [],
-    "_N$isChecked": true
+    "_N$isChecked": false
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -4255,7 +4255,7 @@
       }
     ],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [],
     "_prefab": {
       "__id__": 169
@@ -4287,7 +4287,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0.6,
-      "y": -52.550000000000004
+      "y": -28.85
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -5722,7 +5722,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 276,
-      "height": 64.4
+      "height": 40.7
     },
     "_resize": 1,
     "_N$layoutType": 2,
@@ -5790,6 +5790,19 @@
     "nodSelectStory": null,
     "nodSelectType": null,
     "nodParam": null,
+    "nodType1": null,
+    "nodType2": null,
+    "nodType3": null,
+    "togDone": null,
+    "togUndo": null,
+    "togEqual": null,
+    "togLess": null,
+    "togGreat": null,
+    "editboxNum": null,
+    "togOpA": null,
+    "togOpB": null,
+    "togOpC": null,
+    "togOpD": null,
     "labFilename": null
   },
   {
@@ -5803,7 +5816,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 276,
-      "height": 47
+      "height": 135.7
     },
     "_resize": 1,
     "_N$layoutType": 2,
