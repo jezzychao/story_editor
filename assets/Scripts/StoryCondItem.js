@@ -52,7 +52,6 @@ cc.Class({
     init: function (cond, onDeleteEvent) {
         this.mCond = cond;
         this.mOnEvent = onDeleteEvent;
-        //TODO: refresh
         if (this.mCond['file']) {
             this.mFileName = this.mCond['file'];
             this.labFilename.string = this.mFileName;
@@ -62,7 +61,7 @@ cc.Class({
             let infos = FileCache.getPackagesBrief(this.mFileName);
             this.labStory.string = `${this.mPackageId}:${infos[this.mPackageId]}`;
         }
-        if (this.mCond['categroy']) {
+        if (this.mCond['category']) {
             let t = this.mCond['category'];
             this.mCurrCategory = t;
             this.labCategory.string = this.mCategory[t];
@@ -70,11 +69,43 @@ cc.Class({
                 this.togDone.isChecked = this.mCond['param'] == 1;
                 this.togUndo.isChecked = this.mCond['param'] == 0;
             } else if (t == 2) {
-                
+                let args = this.mCond['param'].split(',');
+                this.togEqual.isChecked = args[0] == '0';
+                this.togGreat.isChecked = args[0] == '1';
+                this.togLess.isChecked = args[0] == '-1';
+                this.editboxNum.string = args[1];
             } else if (t == 3) {
-
+                this._resetType2();
+                this.togOpA.isChecked = false;
+                let ops = [this.togOpA, this.togOpB, this.togOpC, this.togOpD];
+                ops.forEach((val, idx) => {
+                    if (val.node.active) {
+                        let label = val.node.getChildByName('Lab').getComponent(cc.Label);
+                        let arrowId = label.string.split(':')[0];
+                        if (arrowId == this.mCond['param']) {
+                            val.isChecked = true;
+                        }
+                    }
+                })
             } else if (t == 4) {
+                this._resetType2();
+                this.togOpA.isChecked = false;
+                let args = this.mCond['param'].split(',');
+                let ops = [this.togOpA, this.togOpB, this.togOpC, this.togOpD];
+                ops.forEach((val, idx) => {
+                    if (val.node.active) {
+                        let label = val.node.getChildByName('Lab').getComponent(cc.Label);
+                        let arrowId = label.string.split(':')[0];
+                        if (arrowId == args[0]) {
+                            val.isChecked = true;
+                        }
+                    }
+                });
 
+                this.togEqual.isChecked = args[1] == '0';
+                this.togGreat.isChecked = args[1] == '1';
+                this.togLess.isChecked = args[1] == '-1';
+                this.editboxNum.string = args[2];
             }
         }
     },
