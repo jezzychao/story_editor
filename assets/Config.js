@@ -8,15 +8,15 @@ const config = {
 
     MUSIC_LIB: {
         1: {
-            music: 'xxx',
+            music: 'default_music',
             remark: '默认音乐',
         },
     },
 
     SOUND_LIB: {
         1: {
-            sound: 'xxxxx',
-            remark: '未知音效'
+            sound: 'default_sound',
+            remark: '默认音效'
         },
     },
 
@@ -24,7 +24,10 @@ const config = {
         1: {
             id: 1001,
             name: '约瑟',
-            bust: 'icon_test',
+        },
+        2: {
+            id: 1002,
+            name: '约瑟2号',
         },
     },
 

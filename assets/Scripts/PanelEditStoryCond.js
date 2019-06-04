@@ -1,3 +1,15 @@
+module.exports = {
+    show: function (cond, arrowId, onClose) {
+        utils.loadPrefab('PanelEditStoryCond', (res) => {
+            var panel = cc.instantiate(res);
+            panel.parent = cc.find('Canvas');
+            panel.position = cc.v2(0, 0);
+            panel.getComponent(panel.name).init(cond, arrowId, onClose);
+        });
+    },
+}
+
+
 cc.Class({
     extends: cc.Component,
 
@@ -20,11 +32,12 @@ cc.Class({
         togOptions: [cc.Toggle],
 
         togOptions2: [cc.Toggle],
-        togCompares: [cc.Toggle],
+        togCompares: [cc.Toggle],//== < >
         editBoxCnt2: cc.EditBox,
     },
 
     ctor: function () {
+        this.mCurrArrowId = null;
         this.mCond = null;
         this.mOnEvent = null;
 
@@ -41,23 +54,32 @@ cc.Class({
             3: '选项状态',
             4: '选项次数',
         }
+
+        this.mOnClose = null;
     },
 
-    init: function (condData) {
+    init: function (condData, arrowId, onClose) {
+        this.mCurrArrowId = arrowId;
         this.mCond = condData;
+        this.mOnClose = onClose;
         if (this.mCond['file']) {
             this.mFileName = this.mCond['file'];
             if (this.mCond['packageId']) {
                 this.mPackageId = this.mCond['packageId'];
             }
-            if (this.mCond['category']) {
-                let parseFuncName = '_parseParam_' + this.mCond['category'];
+            if (this.mCond['categroy']) {
+                this.mCurrCategory = this.mCond['categroy'];
+                let parseFuncName = '_parseParam_' + this.mCond['categroy'];
                 var data = this[parseFuncName](this.mCond['param']);
             }
         }
         this._refreshFileName();
         this._refreshSelectedStory();
         this._refreshCategory(data);
+    },
+
+    onDestroy() {
+        this.mOnClose && this.mOnClose(this.mCond);
     },
 
     buttonListener: function (event) {
@@ -98,11 +120,17 @@ cc.Class({
                 });
             });
         } else if (tag.name === 'BtnSure') {
-            if(!self._checkInput()){
+            if (!self._checkInput()) {
                 return;
             }
             let data = self._genCondData();
-            
+            if (this.mCond['file'] && this.mCond['packageId']) {
+                FileCache.decreaseReferenceCount(this.mCond['file'], this.mCond['packageId'], FileMgr.getOpened(), this.mCurrArrowId);
+            }
+            this._set(data);
+            FileCache.incrreaseReferenceCount(this.mCond['file'], this.mCond['packageId'], FileMgr.getOpened(), this.mCurrArrowId);
+            msg.send(msg.key.SAVE);
+            this.node.destroy();
         } else if (tag.name === 'BtnCancel') {
             this.node.destroy();
         }
@@ -124,8 +152,8 @@ cc.Class({
         this._refreshCategory();
     },
 
-    _onSelectCategory: function (category) {
-        this.mCurrCategory = category;
+    _onSelectCategory: function (categroy) {
+        this.mCurrCategory = categroy;
         this._refreshCategory();
     },
 
@@ -159,6 +187,43 @@ cc.Class({
             operator: parseInt(args[1]),
             count: parseInt(args[2]),
         };
+    },
+
+    _toStringParam: function () {
+        let param = null;
+        if (this.mCurrCategory == 1) {
+            param = this.togDone.isChecked ? '1' : '0';
+        } else if (this.mCurrCategory == 2) {
+            let op = this.togEqual.isChecked ? 0 : this.togLess.isChecked ? -1 : 1;
+            param = `${op},${this.editBoxCnt.string}`;
+        } else if (this.mCurrCategory == 3) {
+            let selected;
+            this.togOptions.forEach((val) => {
+                if (val.node.active) {
+                    if (val.isChecked) {
+                        selected = val;
+                    }
+                }
+            });
+            let option = selected.getChildByName('Lab').getComponent(cc.Label).string;
+            let id = option.split(':')[0];
+            param = id;
+        } else if (this.mCurrCategory == 4) {
+            let operator = this.togCompares[0].isChecked ? 0 : this.togCompares[1].isChecked ? -1 : 1;
+
+            let selected;
+            this.togOptions2.forEach((val) => {
+                if (val.node.active) {
+                    if (val.isChecked) {
+                        selected = val;
+                    }
+                }
+            });
+            let option = selected.getChildByName('Lab').getComponent(cc.Label).string;
+            let id = option.split(':')[0];
+            param = `${id},${operator},${this.editBoxCnt2.string}`;
+        }
+        return param;
     },
 
     _refreshFileName: function () {
@@ -318,8 +383,15 @@ cc.Class({
         let tCond = {};
         tCond['file'] = this.mFileName;
         tCond['packageId'] = this.mPackageId;
-
-
+        tCond['categroy'] = this.mCurrCategory;
+        tCond['param'] = this._toStringParam();
+        return tCond;
     },
 
+    _set: function (target) {
+        this.mCond['file'] = target['file'];
+        this.mCond['packageId'] = target['packageId'];
+        this.mCond['categroy'] = target['categroy'];
+        this.mCond['param'] = target['param'];
+    },
 });

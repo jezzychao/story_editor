@@ -55,7 +55,7 @@ vector struct{
                     elif type == 2
                         packageId;
                         categroy; 1.完成状态 2.完成次数 3.选项状态 4.选项次数
-                        param;根据不同的 category 自己组合的参数
+                        param;根据不同的 categroy 自己组合的参数
                 },
                 ...
             ]
@@ -138,8 +138,12 @@ var PlotVecModel = (function () {
                         allUids = allUids.concat(tUids);
                     }
                 }
-                allUids.sort();
-                this.maxUid = parseInt(allUids[allUids.length - 1]) + 1;
+                if (allUids.length) {
+                    allUids.sort();
+                    this.maxUid = parseInt(allUids[allUids.length - 1]) + 1;
+                } else {
+                    this.maxUid = 1;
+                }
             }
             return this.maxUid;
         },
@@ -384,7 +388,16 @@ var PackageModel = (function () {
                     model[uid]['inArrowIds'].splice(index, 1);
                 }
             }
-        }
+        },
+
+        //获取被其他条件引用的信息
+        getRefInfo: function (uid) {
+            if (model[uid]['isGlobal'] && Object.keys(model[uid]['isGlobal']).length) {
+                return model[uid]['isGlobal'];
+            } else {
+                return null;
+            }
+        },
     };
 
     function _createNew(type, remark, v2) {
@@ -570,7 +583,7 @@ arrows:{
                         file:
                         packageId;
                         categroy; 1.完成状态 2.完成次数 3.选项状态 4.选项次数
-                        param;根据不同的 category 自己组合的参数
+                        param;根据不同的 categroy 自己组合的参数
                 },
                 ...
             ]
@@ -610,7 +623,16 @@ var ArrowModel = (function () {
 
         delSingal: function (arrowId) {
             if (model[arrowId]) {
+                var arrow = model[arrowId];
+                if (arrow['subConds']) {
+                    arrow['subConds'].forEach(tSubCond => {
+                        if (tSubCond['type'] == 2 && tSubCond['file'] && tSubCond['packageId']) {
+                            FileCache.decreaseReferenceCount(tSubCond['file'], tSubCond['packageId'], FileMgr.getOpened(), arrowId);
+                        }
+                    });
+                }
                 delete model[arrowId];
+                msg.send(msg.key.SAVE);
             }
         },
 
@@ -707,11 +729,14 @@ var ArrowModel = (function () {
         delSubCond: function (arrowId, condId) {
             var arrow = model[arrowId];
             if (arrow && arrow['subConds']) {
-                for (let i = 0; i < arrow['subConds'].length; ++i) {
-                    if (arrow['subConds'][i]['id'] == condId) {
-                        arrow['subConds'].splice(i, 1);
-                        break;
-                    }
+                let tIndex = arrow['subConds'].findIndex(v => v['id'] == condId);
+                if (tIndex == -1) { return; }
+                let tSubCond = arrow['subConds'][tIndex];
+                arrow['subConds'].splice(tIndex, 1);
+
+                if (tSubCond['type'] == 2 && tSubCond['file'] && tSubCond['packageId']) {
+                    FileCache.decreaseReferenceCount(tSubCond['file'], tSubCond['packageId'], FileMgr.getOpened(), arrowId);
+                    msg.send(msg.key.SAVE);
                 }
             }
         },
@@ -789,7 +814,7 @@ var DataCache = (function () {
         },
 
         getPackage: function (filename, packageUid) {
-            let filedata = getdata(filename);
+            let filedata = this.getdata(filename);
             for (let vecId in filedata) {
                 let packages = filedata[vecId]['packages'];
                 if (packages[packageUid]) {
@@ -798,9 +823,9 @@ var DataCache = (function () {
             }
             console.error(`cannot get package data. file: ${filename}, uid: ${packageUid}`);
         },
-        
+
         getVector: function (filename, packageUid) {
-            let filedata = getdata(filename);
+            let filedata = this.getdata(filename);
             for (let vecId in filedata) {
                 let packages = filedata[vecId]['packages'];
                 if (packages[packageUid]) {
@@ -808,8 +833,38 @@ var DataCache = (function () {
                 }
             }
             console.error(`cannot get package data. file: ${filename}, uid: ${packageUid}`);
-        }
+        },
 
+        decreaseReferenceCount: function (tagFile, packageUid, refFile, refArrowId) {
+            // if (tagFile == refFile) {
+            //     return;
+            // }
+            let pack = this.getPackage(tagFile, packageUid);
+            let data = pack['isGlobal'] || {};
+            if (data[refFile] && data[refFile].length) {
+                let index = data[refFile].findIndex(v => v == refArrowId);
+                if (index != -1) {
+                    data[refFile].splice(index, 1);
+                    if (data[refFile].length == 0) {
+                        delete data[refFile];
+                    }
+                    pack['isGlobal'] = data;
+                    this.savedata(tagFile);
+                }
+            }
+        },
+
+        incrreaseReferenceCount: function (tagFile, packageUid, refFile, refArrowId) {
+            // if (tagFile == refFile) {
+            //     return;
+            // }
+            let pack = this.getPackage(tagFile, packageUid);
+            let data = pack['isGlobal'] || {};
+            data[refFile] = data[refFile] || [];
+            data[refFile].push(refArrowId);
+            pack['isGlobal'] = data;
+            this.savedata(tagFile);
+        },
     }
     return ret;
 })()

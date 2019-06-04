@@ -160,7 +160,7 @@ cc.Class({
                         self._clearAllOutArrows();
                         self.node.color = Colors['normal'];
                     });
-                } 
+                }
                 if (data['isOnce']) {
                     menu.addAct('Cancel Once', () => {
                         data['isOnce'] = 0;
@@ -173,6 +173,18 @@ cc.Class({
                     });
                 }
                 menu.addAct("删除", () => {
+                    let tInfo = PackageModel.getRefInfo(self.mUid);
+                    if (tInfo) {
+                        let tMsg = '该剧情包被其他条件所引用，无法直接删除，请先处理相关联的条件\n';
+                        for (let tFileName in tInfo) {
+                            if (tInfo[tFileName] && tInfo[tFileName].length) {
+                                let tOneline = `${tFileName}: ${tInfo[tFileName].join(',')}\n`;
+                                tMsg += tOneline;
+                            }
+                        }
+                        require('PanelTips').showTips(tMsg);
+                        return;
+                    }
                     msg.send(msg.key.REMOVE_A_RECT_ITEM, self.mUid);
                 });
             });

@@ -14,6 +14,9 @@ cc.Class({
 
         var nodBtnNew = this.node.getChildByName("BtnSave");
         nodBtnNew.on(cc.Node.EventType.TOUCH_END, this._onBtnSaveClick);
+
+        var nodBtnPublish = this.node.getChildByName("BtnPublish");
+        nodBtnPublish.on(cc.Node.EventType.TOUCH_END, this._onBtnPubloshClick);
     },
 
     start() {
@@ -26,5 +29,13 @@ cc.Class({
 
     _onBtnSaveClick: function (event) {
         msg.send(msg.key.SAVE);
+    },
+
+    _onBtnPubloshClick: function (event) {
+        let tCurrFile = FileMgr.getOpened();
+        if (tCurrFile) {
+            DataCompression.HandleStoryFile.start(tCurrFile);
+        }
+        DataCompression.HandleConfig.start();
     },
 });

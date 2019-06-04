@@ -1,4 +1,6 @@
-
+module.exports.getCurrArrowId = function () {
+    return cc.find('Canvas/ArrowProperties').getComponent('ArrowProperties').getId();
+}
 cc.Class({
     extends: cc.Component,
 
@@ -27,6 +29,12 @@ cc.Class({
     onDestroy() {
         msg.cancelAll(this);
     },
+
+    getId: function () {
+        return this.mId;
+    },
+
+    
 
     _init: function () {
         this.mId = null;

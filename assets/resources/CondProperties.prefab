@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "CondProperties_0",
+    "_name": "CondProperties_1",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -89,7 +89,7 @@
       }
     ],
     "_tag": -1,
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 7

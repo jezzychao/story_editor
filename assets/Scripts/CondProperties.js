@@ -63,7 +63,7 @@ cc.Class({
         item.parent = this.content;
         item.x = 0;
         var scr = item.getComponent(item.name);
-        scr.init(cond, (id) => { this._deleteCond(id); });
+        scr.init(cond, (id) => { this._deleteCond(id); }, this.mArrowId);
         this.mAllItems.push(scr);
         this._updateData();
     },
